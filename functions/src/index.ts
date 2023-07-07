@@ -1,5 +1,6 @@
 "use strict";
 
+const https = require("https");
 const {logger} = require("firebase-functions");
 const {onRequest} = require("firebase-functions/v2/https");
 
@@ -106,3 +107,34 @@ exports.login = onRequest(
     res.send({ msg: 'OK', data: user.token })
   }
 );
+
+exports.getGameInfo = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (request: any, response: any) => {
+
+    const appID = request.body
+
+    https.get(`https://store.steampowered.com/api/appdetails?appids=${appID}`, (res: any) => {
+      let data: any[] = [];
+      const headerDate = res.headers && res.headers.date ? res.headers.date : 'no response date';
+      console.log('Status Code:', res.statusCode);
+      console.log('Date in Response header:', headerDate);
+
+      res.on('data', (chunk: any) => {
+        data.push(chunk);
+      });
+
+      res.on('end', () => {
+        console.log('Response ended: ');
+        const result = JSON.parse(Buffer.concat(data).toString());
+        response.send(result)
+      });
+
+    }).on('error', (err: any) => {
+      console.log('Error: ', err.message);
+      response.send({ msg: err.message})
+    });
+  }
+);
+
+

@@ -1,13 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+/* font-family: 'Noto Sans', sans-serif; */
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #1f1f23;
+  color: #dedee3;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+a {
+  color: #dedee3;
+}
+
+.main_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.main_title {
+  margin: 25px 0 30px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+}
+
+.login_link {
+  display: block;
+  margin-left: 15px;
+}
+
+.login_link img {
+  width: 35px;
+  display: block;
+}
+
+.navmenu_wrap {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.navmenu_wrap a {
+  display: block;
+  padding: 15px 20px;
+  color: #e3e3e8;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all .2s ease-in-out;
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+  width: 110px;
+  position: relative;
+}
+
+.navmenu_wrap a::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 1px;
+  background-color: #e3e3e8;
+  transition: all .2s ease-in-out;
+}
+
+.navmenu_wrap a:hover::after {
+  width: 50%;
+}
+
+.navmenu_wrap a.active::after {
+  width: 100%;
+}
+
+.dunderlist_wrap {
+  max-width: 800px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.dunderlist_item_wrap {
+  display: flex;
+  background-color: #26262c;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.dunderlist_item_info_wrap {
+  padding: 0 10px;
+}
+
+.dunderlist_item_img_wrap img {
+  width: 300px;
+}
+
+.dunderlist_item_info_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dunderlist_item_info_wrap a {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.dunderlist_item_title {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.reactions_wrap {
+  display: flex;
+}
+
+.reaction_item_wrap {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px;
+  border: 2px solid #afafaf;
+  border-radius: 10px;
+  margin-right: 10px;
+  user-select: none;
+  transition: all .1s ease-in-out;
+}
+
+.reaction_item_wrap.active {
+  background-color: #71575b;
+}
+
+.reaction_item_wrap:hover {
+  cursor: pointer;
+}
+
+.reaction_item_wrap img {
+  width: 20px;
+  display: block;
+  margin-right: 5px;
+}
+
+.reaction_item_wrap span {
+  font-size: 18px;
+  display: block;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.add_new_game_btn {
+  display: block;
+  padding: 15px 20px;
+  background-color: #be2a2a;
+  color: #e3e3e8;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all .2s ease-in-out;
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+  border: none;
+  margin: 30px 0 10px;
+  border-radius: 26px;
 }

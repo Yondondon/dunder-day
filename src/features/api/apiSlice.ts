@@ -4,8 +4,15 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
   endpoints: builder => ({
-    getPosts: builder.query({
-      query: () => '/posts'
+    // getGameInfo: builder.query<any, void>({
+    //   query: () => '/getGameInfo'
+    // }),
+    getGameInfo: builder.mutation({
+      query: appID => ({
+        url: '/getGameInfo',
+        method: 'POST',
+        body: appID
+      })
     }),
     login: builder.mutation({
       query: userData => ({
@@ -18,5 +25,6 @@ export const apiSlice = createApi({
 })
 
 export const {
-  useLoginMutation
+  useLoginMutation,
+  useGetGameInfoMutation
 } = apiSlice;
