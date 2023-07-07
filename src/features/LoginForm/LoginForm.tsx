@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLoginMutation } from '../api/apiSlice';
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useNavigate  } from "react-router-dom";
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate  } from 'react-router-dom';
 import { FormInput } from '../../components/FormInput/FormInput';
 
 type Inputs = {
@@ -42,22 +42,24 @@ export const LoginForm = () => {
       <div>Залогінитися</div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
-          register={methods.register}
+          methods={methods}
           name='login'
           placeholder='Логін'
           isRequired={true}
+          value=''
         />
         {errors.login && <span>Це поле обов'язкове</span>}
         <FormInput
-          register={methods.register}
+          methods={methods}
           name='password'
           type='password'
           placeholder='Пароль'
           isRequired={true}
+          value=''
         />
         {errors.password && <span>Це поле обов'язкове</span>}
         
-        <button type="submit">Надіслати</button>
+        <button type='submit'>Надіслати</button>
       </form>
     </>
   )

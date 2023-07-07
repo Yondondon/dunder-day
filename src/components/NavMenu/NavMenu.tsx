@@ -4,8 +4,8 @@ import { NavLink } from 'react-router-dom';
 export const NavMenu = () => {
   return (
     <div className='navmenu_wrap'>
-      <NavLink to='/'>Очікується</NavLink>
-      <NavLink to='/played'>Зіграні</NavLink>
+      <NavLink to='/' className={'navlink'}>Очікується</NavLink>
+      <NavLink to='/played' className={'navlink'}>Зіграні</NavLink>
     </div>
   )
 }

@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 
 type Props = {
   name: string;
-  quantity: string;
+  quantity: number;
 }
 
 export const ReactionItem: FC<Props> = ({name, quantity}) => {

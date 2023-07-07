@@ -32,20 +32,20 @@ exports.addmessage = onRequest(
 );
 
 
-// exports.getUsers = onRequest(
-//   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
-//   async (req: any, res: any) => {
-//     const users = await getFirestore().collection("users").get()
+exports.getDunderlist = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    const users = await getFirestore().collection("dunderlist").get()
 
-//     let result: any[] = [];
+    let result: any[] = [];
 
-//     users.forEach((doc: any) => {
-//       result.push(doc.data())
-//     });
+    users.forEach((doc: any) => {
+      result.push(doc.data())
+    });
 
-//     res.json(result);
-//   }
-// );
+    res.json(result);
+  }
+);
 
 // exports.addUser = onRequest(
 //   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
@@ -134,6 +134,26 @@ exports.getGameInfo = onRequest(
       console.log('Error: ', err.message);
       response.send({ msg: err.message})
     });
+  }
+);
+
+exports.addNewGame = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    
+    const body = req.body;
+
+    const userQuery = await getFirestore()
+      .collection("dunderlist")
+      .add({
+        ...body, 
+        reactions: {
+          heart: 0,
+          poop: 0
+        }
+      });
+    
+    res.send({ msg: 'OK', userQuery })
   }
 );
 

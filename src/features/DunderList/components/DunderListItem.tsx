@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { ReactionItem } from './ReactionItem';
 
-export const DunderListItem = () => {
+type Props = {
+  name: string;
+  gameUrl: string;
+  imageUrl: string;
+  reactions: { heart: number; poop: number; };
+}
+
+//TODO: додати плейсхолдер, якщо нема зображення
+export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions}) => {
   return (
     <div className='dunderlist_item_wrap'>
       <div className='dunderlist_item_img_wrap'>
-        <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/2000950/header.jpg' alt='' />
+        <img src={imageUrl} alt='' />
       </div>
       <div className='dunderlist_item_info_wrap'>
-        <div className='dunderlist_item_title'>Call of Duty®: Modern Warfare®</div>
-        <a href='https://store.steampowered.com/app/2000950/Call_of_Duty_Modern_Warfare/' target='_blank'>Посилання на гру</a>
+        <div className='dunderlist_item_title'>{name}</div>
+        { gameUrl && <a href={gameUrl} target='_blank'>Посилання на гру</a> }
         <div className='reactions_wrap'>
-          <ReactionItem name={'heart'} quantity={'3'} />
-          <ReactionItem name={'poop'} quantity={'2'} />
+          <ReactionItem name={'heart'} quantity={reactions.heart} />
+          <ReactionItem name={'poop'} quantity={reactions.poop} />
         </div>
       </div>
     </div>
