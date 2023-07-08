@@ -5,7 +5,7 @@ const {logger} = require("firebase-functions");
 const {onRequest} = require("firebase-functions/v2/https");
 
 const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+const {getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
 
 initializeApp();
 
@@ -14,22 +14,22 @@ initializeApp();
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Firestore under the path /messages/:documentId/original
 // [START addmessageTrigger]
-exports.addmessage = onRequest(
-  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
-  async (req: any, res: any) => {
-    // [END addmessageTrigger]
-    // Grab the text parameter.
-    const original = req.query.text;
-    // [START adminSdkAdd]
-    // Push the new message into Firestore using the Firebase Admin SDK.
-    const writeResult = await getFirestore()
-        .collection("messages")
-        .add({original: original});
-    // Send back a message that we've successfully written the message
-    res.json({result: `Message with ID: ${writeResult.id} added.`});
-    // [END adminSdkAdd]
-  }
-);
+// exports.addmessage = onRequest(
+//   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+//   async (req: any, res: any) => {
+//     // [END addmessageTrigger]
+//     // Grab the text parameter.
+//     const original = req.query.text;
+//     // [START adminSdkAdd]
+//     // Push the new message into Firestore using the Firebase Admin SDK.
+//     const writeResult = await getFirestore()
+//         .collection("messages")
+//         .add({original: original});
+//     // Send back a message that we've successfully written the message
+//     res.json({result: `Message with ID: ${writeResult.id} added.`});
+//     // [END adminSdkAdd]
+//   }
+// );
 
 
 exports.getDunderlist = onRequest(
@@ -125,14 +125,14 @@ exports.getGameInfo = onRequest(
       });
 
       res.on('end', () => {
-        console.log('Response ended: ');
+        console.log('Response ended.');
         const result = JSON.parse(Buffer.concat(data).toString());
         response.send(result)
       });
 
     }).on('error', (err: any) => {
       console.log('Error: ', err.message);
-      response.send({ msg: err.message})
+      response.send({ msg: 'a'})
     });
   }
 );
@@ -150,7 +150,8 @@ exports.addNewGame = onRequest(
         reactions: {
           heart: 0,
           poop: 0
-        }
+        },
+        timestamp: FieldValue.serverTimestamp()
       });
     
     res.send({ msg: 'OK', userQuery })

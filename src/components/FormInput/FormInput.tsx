@@ -7,9 +7,21 @@ type FormInputType = {
   isRequired: boolean;
   value: string;
   methods: any;
+  styles?: string[] | string;
+  autoComplete?: boolean;
 }
 
-export const FormInput: FC<FormInputType> = ({ methods, name, isRequired, type, placeholder, value }) => {
+export const FormInput: FC<FormInputType> = (
+  {
+    methods,
+    name,
+    isRequired,
+    type,
+    placeholder,
+    value, styles,
+    autoComplete = false,
+  }) => {
+
   const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
@@ -28,6 +40,8 @@ export const FormInput: FC<FormInputType> = ({ methods, name, isRequired, type, 
       type={ type || 'text' }
       placeholder={placeholder}
       onChange={(e) => setInputValue(e.target.value)}
+      className={styles}
+      autoComplete={autoComplete ? 'on' : 'off' }
     />
   )
 }
