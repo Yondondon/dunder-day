@@ -1,8 +1,12 @@
-import React, { useEffect } from 'react';
-import { useLoginMutation } from '../api/apiSlice';
+import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useNavigate  } from 'react-router-dom';
+import { NavLink, useNavigate  } from 'react-router-dom';
+import { useLoginMutation } from '../api/apiSlice';
+import { login } from './userSlice';
+import { useAppDispatch } from '../../store/hooks';
 import { FormInput } from '../../components/FormInput/FormInput';
+import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
+import { Loader } from '../../components/Loader/Loader';
 
 type Inputs = {
   login: string;
@@ -15,16 +19,26 @@ const defaultValues = {
 }
 
 export const LoginForm = () => {
-  const [login, ] = useLoginMutation();
+  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const [loginQuery, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const methods = useForm({ defaultValues });
   const { handleSubmit, reset, formState: { errors, isSubmitSuccessful } } = methods;
   const onSubmit: SubmitHandler<Inputs> = data => {
-    login(data)
+    loginQuery(data)
       .unwrap()
       .then((result) => {
-        document.cookie = `userToken=${result.data}; path=/`;
-        navigate('/')
+        if(result.status === 'success') {
+          const userToken = result.data;
+          document.cookie = `userToken=${userToken}; path=/`;
+          dispatch(login(userToken))
+          navigate('/')
+        } else {
+          setErrorMsg(result.msg)
+          setShowModal(true)
+        }
       })
       .catch((error) => {
         console.log('error:', error)
@@ -39,28 +53,36 @@ export const LoginForm = () => {
 
   return (
     <>
-      <div>Залогінитися</div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormInput
-          methods={methods}
-          name='login'
-          placeholder='Логін'
-          isRequired={true}
-          value=''
-        />
-        {errors.login && <span>Це поле обов'язкове</span>}
-        <FormInput
-          methods={methods}
-          name='password'
-          type='password'
-          placeholder='Пароль'
-          isRequired={true}
-          value=''
-        />
-        {errors.password && <span>Це поле обов'язкове</span>}
-        
-        <button type='submit'>Надіслати</button>
-      </form>
+      <NavLink to={'/'} className={'navlink'}>На головну</NavLink>
+      <div className='login_form_title'>Залогінитися</div>
+      <div className='login_form_wrap'>
+      { isLoading && <Loader type='form' />}
+        <form onSubmit={handleSubmit(onSubmit)} className='login_form'>
+          <div className='form_field'>
+            <FormInput
+              methods={methods}
+              name='login'
+              placeholder='Логін'
+              isRequired={true}
+              value=''
+            />
+            {errors.login && <span className='form_error_msg'>Це поле обов'язкове</span>}
+          </div>
+          <div className='form_field'>
+            <FormInput
+              methods={methods}
+              name='password'
+              type='password'
+              placeholder='Пароль'
+              isRequired={true}
+              value=''
+            />
+            {errors.password && <span className='form_error_msg'>Це поле обов'язкове</span>}
+          </div>
+          <button type='submit'>Надіслати</button>
+        </form>
+      </div>
+      { showModal && <ModalWindow onClose={() => setShowModal(false)} image='pain.png' text={errorMsg} /> }
     </>
   )
 }

@@ -126,9 +126,22 @@ button:hover {
   margin-left: 15px;
 }
 
-.login_link img {
+.login_link img,
+.logout_btn img {
   width: 35px;
   display: block;
+}
+
+.logout_btn {
+  display: block;
+  margin-left: 15px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.logout_btn:hover {
+  background-color: transparent;
 }
 
 .navmenu_wrap {
@@ -308,7 +321,7 @@ button:hover {
   width: 500px;
 }
 
-.game_info_form .form_field {
+.form_field {
   margin-bottom: 25px;
   position: relative;
   padding-bottom: 20px;
@@ -326,7 +339,7 @@ button:hover {
   position: relative;
 }
 
-.game_info_form_wrap button {
+.game_info_form button {
   margin: 0 auto;
   border-radius: 19px;
   padding: 12px 25px;
@@ -357,4 +370,15 @@ button:hover {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.login_form_title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 50px 0 30px;
+}
+
+.login_form button{
+  margin: 0 auto;
+  border-radius: 17px;
 }

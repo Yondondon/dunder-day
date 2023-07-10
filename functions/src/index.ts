@@ -76,7 +76,7 @@ exports.login = onRequest(
       .where('username', '==', body.login)
       .get();
     if(userQuery.empty) {
-      res.status(404).json('No such user')
+      res.json({ status: false, msg: 'Такого дундика не існує.' })
       return;
     }
 
@@ -100,11 +100,11 @@ exports.login = onRequest(
     });
 
     if(user.password !== body.password ) {
-      res.status(401).json('Password incorrect')
+      res.json({ status: false, msg: 'Неправильний пароль. Запам\'ятай, пароль: "ТЕТРІАНДОХ".' })
       return;
     }
     
-    res.send({ msg: 'OK', data: user.token })
+    res.send({ status: 'success', data: user.token })
   }
 );
 
@@ -153,8 +153,10 @@ exports.addNewGame = onRequest(
         },
         timestamp: FieldValue.serverTimestamp()
       });
+
+      console.log(userQuery)
     
-    res.send({ msg: 'OK', userQuery })
+    res.send({ msg: 'OK' })
   }
 );
 

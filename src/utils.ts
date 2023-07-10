@@ -1,4 +1,4 @@
-export const getCookie = (cookieName: string): string | null =>  {
+export const getCookie = (cookieName: string): string =>  {
   let name = cookieName + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
   let cookiesArr = decodedCookie.split(';');
@@ -11,5 +11,9 @@ export const getCookie = (cookieName: string): string | null =>  {
       return cookieItem.substring(name.length, cookieItem.length);
     }
   }
-  return null;
+  return '';
+}
+
+export const eraseCookie = (name: string) => {
+  document.cookie = name + '=; Max-Age=0';
 }

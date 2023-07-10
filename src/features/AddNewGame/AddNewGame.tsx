@@ -66,24 +66,22 @@ export const AddNewGame = () => {
 
   return (
     <>
-      <div className='main_wrap'>
-        <NavLink to={'/'} className={'navlink'}>На головну</NavLink>
-        <div className='parse_gameinfo_block'>
-          <p>Отримати інформацію про гру по ID</p>
-          <div className='parse_gameinfo_input_block'>
-            <input type='text' value={appID} onChange={e => handleInputChange(e)} />
-            <button className='parse_gameinfo_btn' onClick={handleClick}>Отримати</button>
-          </div>
-          { errorMsg.length > 0 && <span className='error_msg'>{errorMsg}</span>}
+      <NavLink to={'/'} className={'navlink'}>На головну</NavLink>
+      <div className='parse_gameinfo_block'>
+        <p>Отримати інформацію про гру по ID</p>
+        <div className='parse_gameinfo_input_block'>
+          <input type='text' value={appID} onChange={e => handleInputChange(e)} />
+          <button className='parse_gameinfo_btn' onClick={handleClick}>Отримати</button>
         </div>
-        <p>Або ввести дані руцями</p>
-        <GameInfoForm
-          name={parsedGameInfo.name}
-          imageUrl={parsedGameInfo.imageUrl}
-          appID={usedAppID}
-          isLoading={isLoading}
-        />
+        { errorMsg.length > 0 && <span className='error_msg'>{errorMsg}</span>}
       </div>
+      <p>Або ввести дані руцями</p>
+      <GameInfoForm
+        name={parsedGameInfo.name}
+        imageUrl={parsedGameInfo.imageUrl}
+        appID={usedAppID}
+        isLoading={isLoading}
+      />
       { showModal && (
           <ModalWindow
             text={errorMsg}
