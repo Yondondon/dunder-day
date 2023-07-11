@@ -17,7 +17,7 @@ export const DunderList = () => {
   if(dunderlist && dunderlist.length > 0) {
     sortedDunderlist = [...dunderlist]
     sortedDunderlist.sort((a: any, b: any) => {
-      return b.timestamp._seconds - a.timestamp._seconds;
+      return b.created - a.created;
     })
   }
 
@@ -29,20 +29,18 @@ export const DunderList = () => {
   }, [isError])
   
 
-  if(isFetching) {
-    return <Loader />
-  }
-
   return (
     <div className='dunderlist_wrap'>
+      { isFetching && <Loader />}
       { sortedDunderlist && sortedDunderlist.map((item: any) => {
         return (
           <DunderListItem
-            key={Math.random()}
+            key={Math.random().toString()}
             name={item.name}
             imageUrl={item.imageUrl}
             gameUrl={item.gameUrl}
             reactions={item.reactions}
+            id={item.id}
           />
         )
       })}

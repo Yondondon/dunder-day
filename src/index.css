@@ -201,8 +201,9 @@ button:hover {
 .dunderlist_item_wrap {
   display: flex;
   background-color: #26262c;
-  padding: 10px;
+  padding: 10px 42px 10px 10px;
   margin-bottom: 15px;
+  position: relative;
 }
 
 .dunderlist_item_info_wrap {
@@ -230,6 +231,38 @@ button:hover {
   line-height: 1.1;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.dunderlist_item_controls {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.list_item_control {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  display: block;
+}
+
+.list_item_control:hover {
+  background-color: transparent;
+}
+
+.dunderlist_item_controls .list_item_control:last-child {
+  margin-top: 20px;
+}
+
+.dunderlist_item_controls img {
+  width: 32px;
+  height: 32px;
+  display: block;
 }
 
 .reactions_wrap {
@@ -372,6 +405,10 @@ button:hover {
   }
 }
 
+.login_form_wrap {
+  position: relative;
+}
+
 .login_form_title {
   font-size: 24px;
   font-weight: bold;
@@ -381,4 +418,61 @@ button:hover {
 .login_form button{
   margin: 0 auto;
   border-radius: 17px;
+}
+
+.playedlist_wrap {
+  margin-top: 30px;
+}
+
+.playedlist_wrap:empty::after {
+  content: 'У списку поки нема ігорів :с';
+  text-align: center;
+  font-style: italic;
+  display: block;
+}
+
+.playedlist_item_wrap {
+  display: flex;
+  background-color: #26262c;
+  padding: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  width: 730px;
+}
+
+.playedlist_item_info_wrap {
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.playedlist_item_img_wrap {
+  display: flex;
+  align-items: center;
+}
+
+.playedlist_item_img_wrap img {
+  width: 100px;
+  display: block;
+}
+
+.playedlist_item_info_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.playedlist_item_info_wrap a {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.playedlist_item_date {
+  font-style: italic;
+}
+
+.playedlist_item_title {
+  font-size: 16px;
+  line-height: 1.1;
+  font-weight: bold;
+  margin-bottom: 10px;
 }

@@ -34,7 +34,12 @@ export const GameInfoForm: FC<Props> = (props) => {
   const { handleSubmit, reset, formState: { errors, isSubmitSuccessful } } = methods;
   const [addNewGame, { isLoading, isSuccess }] = useAddNewGameMutation()
   const onSubmit: SubmitHandler<Inputs> = data => {
-    addNewGame(data)
+    const formData = {
+      ...data,
+      id: Math.random().toString(),
+      created: Date.now(),
+    }
+    addNewGame(formData)
       .unwrap()
       .then((result) => {
         console.log(result);

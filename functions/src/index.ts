@@ -9,37 +9,14 @@ const {getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore
 
 initializeApp();
 
-
-// [START addmessage]
-// Take the text parameter passed to this HTTP endpoint and insert it into
-// Firestore under the path /messages/:documentId/original
-// [START addmessageTrigger]
-// exports.addmessage = onRequest(
-//   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
-//   async (req: any, res: any) => {
-//     // [END addmessageTrigger]
-//     // Grab the text parameter.
-//     const original = req.query.text;
-//     // [START adminSdkAdd]
-//     // Push the new message into Firestore using the Firebase Admin SDK.
-//     const writeResult = await getFirestore()
-//         .collection("messages")
-//         .add({original: original});
-//     // Send back a message that we've successfully written the message
-//     res.json({result: `Message with ID: ${writeResult.id} added.`});
-//     // [END adminSdkAdd]
-//   }
-// );
-
-
 exports.getDunderlist = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
-    const users = await getFirestore().collection("dunderlist").get()
+    const list = await getFirestore().collection("dunderlist").get()
 
     let result: any[] = [];
 
-    users.forEach((doc: any) => {
+    list.forEach((doc: any) => {
       result.push(doc.data())
     });
 
@@ -47,30 +24,26 @@ exports.getDunderlist = onRequest(
   }
 );
 
-// exports.addUser = onRequest(
-//   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
-//   async (req: any, res: any) => {
-    
-//     const body = req.body;
+exports.getPlayedlist = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    const list = await getFirestore().collection("playedlist").get()
 
-//     const newUser = await getFirestore().collection("users").add({
-//       username: body.username,
-//       id: Math.random()
-//     })
+    let result: any[] = [];
 
-//     // setTimeout(function() {
-//     //   res.json({ data: newUser });
-//     // },500);
-//     res.json({ data: newUser });
-//   }
-// );
+    list.forEach((doc: any) => {
+      result.push(doc.data())
+    });
+
+    res.json(result);
+  }
+);
 
 exports.login = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
     
     const body = req.body;
-
     const userQuery = await getFirestore()
       .collection("users")
       .where('username', '==', body.login)
@@ -132,18 +105,18 @@ exports.getGameInfo = onRequest(
 
     }).on('error', (err: any) => {
       console.log('Error: ', err.message);
-      response.send({ msg: 'a'})
+      response.send({ msg: 'Сталася помилка при запиті'})
     });
   }
 );
 
+//TODO: перевірка на дублікати
 exports.addNewGame = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
     
     const body = req.body;
-
-    const userQuery = await getFirestore()
+    await getFirestore()
       .collection("dunderlist")
       .add({
         ...body, 
@@ -151,12 +124,75 @@ exports.addNewGame = onRequest(
           heart: 0,
           poop: 0
         },
-        timestamp: FieldValue.serverTimestamp()
       });
 
-      console.log(userQuery)
+    res.send({ msg: 'Гру додано у дундерсписок' })
+  }
+);
+
+
+//TODO: перевірка на дублікати
+exports.moveToPlayedList = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
     
-    res.send({ msg: 'OK' })
+    const body = req.body;
+    const snapshot = await getFirestore()
+      .collection("dunderlist")
+      .where('id', '==', body.id)
+      .get();
+
+    let gameToMove: { 
+      name: string; 
+      gameUrl: string;
+      imageUrl: string;
+      id: string;
+      playedDate: number;
+    } = {
+      name: '',
+      gameUrl: '',
+      imageUrl: '',
+      id: '',
+      playedDate: 0
+    };
+
+    if (snapshot.empty) {
+      res.send({ msg: 'В базі немає гри з таким ID'})
+      return;
+    }  
+
+    snapshot .forEach((doc: any) => {
+      gameToMove = {
+        name: doc.data().name,
+        gameUrl: doc.data().gameUrl,
+        imageUrl: doc.data().imageUrl,
+        id: Math.random().toString(),
+        playedDate: body.playedDate
+      }
+      doc.ref.delete()
+    });
+
+    await getFirestore().collection("playedlist").add(gameToMove);
+
+    res.send({ msg: 'Гру перенесено до списку зіграних'})
+  }
+);
+
+exports.removeDunderListGame = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    
+    const body = req.body;
+    const userQuery = await getFirestore()
+      .collection("dunderlist")
+      .where('id', '==', body)
+      .get();
+
+    userQuery.forEach((doc: any) => {
+      doc.ref.delete()
+    });
+
+    res.send({ msg: 'Гру видалено зі списку' })
   }
 );
 
