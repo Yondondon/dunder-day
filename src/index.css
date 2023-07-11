@@ -233,7 +233,8 @@ button:hover {
   margin-bottom: 10px;
 }
 
-.dunderlist_item_controls {
+.dunderlist_item_controls,
+.playedlist_item_controls {
   position: absolute;
   height: 100%;
   top: 0;
@@ -259,7 +260,7 @@ button:hover {
   margin-top: 20px;
 }
 
-.dunderlist_item_controls img {
+.list_item_control img {
   width: 32px;
   height: 32px;
   display: block;
@@ -434,10 +435,10 @@ button:hover {
 .playedlist_item_wrap {
   display: flex;
   background-color: #26262c;
-  padding: 10px;
+  padding: 10px 42px 10px 10px;
   margin-bottom: 10px;
   position: relative;
-  width: 730px;
+  width: calc(750px - 52px);
 }
 
 .playedlist_item_info_wrap {

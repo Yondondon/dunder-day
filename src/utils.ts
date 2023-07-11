@@ -15,7 +15,7 @@ export const getCookie = (cookieName: string): string =>  {
 }
 
 export const eraseCookie = (name: string) => {
-  document.cookie = name + '=; Max-Age=0';
+  document.cookie = `${name}=;max-age=0;`;
 }
 
 export const secondsToDate = (seconds: number): string => {

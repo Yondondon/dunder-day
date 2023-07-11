@@ -116,6 +116,17 @@ exports.addNewGame = onRequest(
   async (req: any, res: any) => {
     
     const body = req.body;
+
+    const snapshot = await getFirestore()
+      .collection("dunderlist")
+      .where('appID', '==', body.appID)
+      .get();
+
+    if (!snapshot.empty) {
+      res.send({ status: false, msg: 'Така гра вже є у списку'})
+      return;
+    }  
+
     await getFirestore()
       .collection("dunderlist")
       .add({
@@ -126,7 +137,7 @@ exports.addNewGame = onRequest(
         },
       });
 
-    res.send({ msg: 'Гру додано у дундерсписок' })
+    res.send({ status: 'success', msg: 'Гру додано у дундерсписок' })
   }
 );
 
@@ -137,7 +148,18 @@ exports.moveToPlayedList = onRequest(
   async (req: any, res: any) => {
     
     const body = req.body;
+
     const snapshot = await getFirestore()
+      .collection("playedlist")
+      .where('appID', '==', body.appID)
+      .get();
+
+    if (!snapshot.empty) {
+      res.send({ status: false, msg: 'Гра з таким ID уже є в списку'})
+      return;
+    }  
+
+    const snapshot2 = await getFirestore()
       .collection("dunderlist")
       .where('id', '==', body.id)
       .get();
@@ -148,33 +170,36 @@ exports.moveToPlayedList = onRequest(
       imageUrl: string;
       id: string;
       playedDate: number;
+      appID: string;
     } = {
       name: '',
       gameUrl: '',
       imageUrl: '',
       id: '',
-      playedDate: 0
+      playedDate: 0,
+      appID: ''
     };
 
-    if (snapshot.empty) {
-      res.send({ msg: 'В базі немає гри з таким ID'})
+    if (snapshot2.empty) {
+      res.send({ status: false, msg: 'В базі немає гри з таким ID'})
       return;
     }  
 
-    snapshot .forEach((doc: any) => {
+    snapshot2 .forEach((doc: any) => {
       gameToMove = {
         name: doc.data().name,
         gameUrl: doc.data().gameUrl,
         imageUrl: doc.data().imageUrl,
         id: Math.random().toString(),
-        playedDate: body.playedDate
+        playedDate: body.playedDate,
+        appID: body.appID
       }
       doc.ref.delete()
     });
 
     await getFirestore().collection("playedlist").add(gameToMove);
 
-    res.send({ msg: 'Гру перенесено до списку зіграних'})
+    res.send({ status: 'success', msg: 'Гру перенесено до списку зіграних'})
   }
 );
 
@@ -185,6 +210,24 @@ exports.removeDunderListGame = onRequest(
     const body = req.body;
     const userQuery = await getFirestore()
       .collection("dunderlist")
+      .where('id', '==', body)
+      .get();
+
+    userQuery.forEach((doc: any) => {
+      doc.ref.delete()
+    });
+
+    res.send({ msg: 'Гру видалено зі списку' })
+  }
+);
+
+exports.removePlayedListGame = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    
+    const body = req.body;
+    const userQuery = await getFirestore()
+      .collection("playedlist")
       .where('id', '==', body)
       .get();
 

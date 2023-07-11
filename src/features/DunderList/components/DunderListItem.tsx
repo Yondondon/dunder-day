@@ -11,10 +11,12 @@ type Props = {
   imageUrl: string;
   reactions: { heart: number; poop: number; };
   id: string;
+  appID: string;
+  setModalText: (text: string) => void;
+  setShowModal: () => void;
 }
 
-//TODO: додати плейсхолдер, якщо нема зображення
-export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, id}) => {
+export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, id, appID, setModalText, setShowModal }) => {
   const isLogged = useAppSelector(selectIsLogged);
   const [removeItem, ] = useRemoveDunderListGameMutation();
   const [move, ] = useMoveToPlayedListMutation()
@@ -25,21 +27,37 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
       .then((response) => {
         console.log(response);
       })
+      .catch((error) => {
+        console.log('error:', error)
+        setModalText('Ой, схоже сервер не відповідає.')
+        setShowModal()
+      })
   }
 
   const handleMoveItem = () => {
     const date: number = Date.now();
-    move({ id, playedDate: date})
+    move({ id, playedDate: date, appID })
       .unwrap()
       .then((response) => {
-        console.log(response);
+        if(!response.status) {
+          console.log(response);
+          setModalText(response.msg)
+          setShowModal()
+        } else {
+          console.log(response);
+        }
+      })
+      .catch((error) => {
+        console.log('error:', error)
+        setModalText('Ой, схоже сервер не відповідає.')
+        setShowModal()
       })
   }
 
   return (
     <div className='dunderlist_item_wrap'>
       <div className='dunderlist_item_img_wrap'>
-        <img src={imageUrl} alt='' />
+        <img src={imageUrl.length > 0 ? imageUrl : 'images/no-image.jpg'} alt='' />
       </div>
       <div className='dunderlist_item_info_wrap'>
         <div className='dunderlist_item_title'>{name}</div>

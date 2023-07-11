@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 import { useAddNewGameMutation } from '../../api/apiSlice';
 import { FormInput } from '../../../components/FormInput/FormInput';
 import { Loader } from '../../../components/Loader/Loader';
@@ -25,11 +24,9 @@ type Props = {
   isLoading: boolean;
 }
 
-//TODO: перевірка на дублікати
 export const GameInfoForm: FC<Props> = (props) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalMsg, setModalMsg] = useState<string>('');
-  const navigate = useNavigate();
   const methods = useForm({ defaultValues });
   const { handleSubmit, reset, formState: { errors, isSubmitSuccessful } } = methods;
   const [addNewGame, { isLoading, isSuccess }] = useAddNewGameMutation()
@@ -38,13 +35,19 @@ export const GameInfoForm: FC<Props> = (props) => {
       ...data,
       id: Math.random().toString(),
       created: Date.now(),
+      appID: props.appID,
     }
     addNewGame(formData)
       .unwrap()
       .then((result) => {
-        console.log(result);
-        setShowModal(true)
-        setModalMsg('Гру додано в Дундерсписок!')
+        if(result.status === 'success') {
+          console.log(result);
+          setShowModal(true)
+          setModalMsg('Гру додано в Дундерсписок!')
+        } else if(!result.status) {
+          setShowModal(true)
+          setModalMsg(result.msg)
+        }
       })
       .catch((error) => {
         console.log('error:', error)
@@ -68,11 +71,7 @@ export const GameInfoForm: FC<Props> = (props) => {
   }
 
   const handleCloseModal = () => {
-    if(isSuccess) {
-      navigate('/')
-    } else {
-      setShowModal(false)
-    }
+    setShowModal(false)
   }
 
   return (

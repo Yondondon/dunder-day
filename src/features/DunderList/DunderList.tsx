@@ -11,6 +11,7 @@ export const DunderList = () => {
     isError,
   } = useGetDunderlistQuery();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalMsg, setModalMsg] = useState<string>('');
 
   let sortedDunderlist: any[] = [];
 
@@ -21,13 +22,12 @@ export const DunderList = () => {
     })
   }
 
-  
   useEffect(() => {
     if(isError) {
       setShowModal(true)
+      setModalMsg('Не вийшло завантажити список.')
     }
   }, [isError])
-  
 
   return (
     <div className='dunderlist_wrap'>
@@ -41,14 +41,17 @@ export const DunderList = () => {
             gameUrl={item.gameUrl}
             reactions={item.reactions}
             id={item.id}
+            appID={item.appID}
+            setModalText={(text: string) => setModalMsg(text)}
+            setShowModal={() => {setShowModal(true)}}
           />
         )
       })}
       { showModal && (
           <ModalWindow
             onClose={() => setShowModal(false)}
-            image='pain.png'
-            text='Не вийшло завантажити список.'
+            image={ isError ? 'pain.png' : 'lina_pes.png' }
+            text={modalMsg}
           />
         )
       }

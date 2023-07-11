@@ -14,7 +14,7 @@ export const apiSlice = createApi({
       providesTags: ['Playedlist']
     }),
     getGameInfo: builder.mutation({
-      query: appID => ({
+      query: (appID: string) => ({
         url: '/getGameInfo',
         method: 'POST',
         body: appID
@@ -34,6 +34,7 @@ export const apiSlice = createApi({
         gameUrl?: string;
         id: string;
         created: number;
+        appID: string;
       }) => ({
         url: '/addNewGame',
         method: 'POST',
@@ -42,15 +43,23 @@ export const apiSlice = createApi({
       invalidatesTags: ['Dunderlist']
     }),
     removeDunderListGame: builder.mutation({
-      query: id => ({
+      query: (id: string) => ({
         url: '/removeDunderListGame',
         method: 'POST',
         body: id
       }),
       invalidatesTags: ['Dunderlist']
     }),
+    removePlayedListGame: builder.mutation({
+      query: (id: string) => ({
+        url: '/removePlayedListGame',
+        method: 'POST',
+        body: id
+      }),
+      invalidatesTags: ['Playedlist']
+    }),
     moveToPlayedList: builder.mutation({
-      query: (data: { id: string; playedDate: number; }) => ({
+      query: (data: { id: string; playedDate: number; appID: string; }) => ({
         url: '/moveToPlayedList',
         method: 'POST',
         body: data
@@ -67,5 +76,6 @@ export const {
   useGetGameInfoMutation,
   useAddNewGameMutation,
   useRemoveDunderListGameMutation,
+  useRemovePlayedListGameMutation,
   useMoveToPlayedListMutation,
 } = apiSlice;

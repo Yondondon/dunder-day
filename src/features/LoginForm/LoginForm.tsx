@@ -32,7 +32,8 @@ export const LoginForm = () => {
       .then((result) => {
         if(result.status === 'success') {
           const userToken = result.data;
-          document.cookie = `userToken=${userToken}; path=/`;
+          const expires = new Date(Date.now() + 7 * 86400000)
+          document.cookie = `userToken=${userToken};expires=${expires};path=/`;
           dispatch(login(userToken))
           navigate('/')
         } else {
