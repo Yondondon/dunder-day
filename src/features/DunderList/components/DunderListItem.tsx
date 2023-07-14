@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useAppSelector } from '../../../store/hooks';
 import { selectIsLogged } from '../../LoginForm/userSlice';
 import { ReactionItem } from './ReactionItem';
@@ -20,6 +20,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
   const isLogged = useAppSelector(selectIsLogged);
   const [removeItem, ] = useRemoveDunderListGameMutation();
   const [move, ] = useMoveToPlayedListMutation()
+  const [isDisabledReactions, setIsDisabledReactions] = useState<boolean>(false)
 
   const handleRemoveItem = () => {
     removeItem(id)
@@ -32,6 +33,12 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
         setModalText('Ой, схоже сервер не відповідає.')
         setShowModal()
       })
+
+    const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+    if(reactions && reactions[appID]) {
+      delete reactions[appID]
+      localStorage.setItem('reactions', JSON.stringify(reactions))
+    }
   }
 
   const handleMoveItem = () => {
@@ -52,7 +59,20 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
         setModalText('Ой, схоже сервер не відповідає.')
         setShowModal()
       })
+
+    const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+    if(reactions && reactions[appID]) {
+      delete reactions[appID]
+      localStorage.setItem('reactions', JSON.stringify(reactions))
+    }
   }
+
+  useEffect(() => {
+    const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+    if(reactions && reactions[appID]) {
+      setIsDisabledReactions(true)
+    }
+  })
 
   return (
     <div className='dunderlist_item_wrap'>
@@ -63,8 +83,20 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
         <div className='dunderlist_item_title'>{name}</div>
         { gameUrl && <a href={gameUrl} target='_blank' rel="noreferrer">Посилання на гру</a> }
         <div className='reactions_wrap'>
-          <ReactionItem name={'heart'} quantity={reactions.heart} />
-          <ReactionItem name={'poop'} quantity={reactions.poop} />
+          <ReactionItem
+            name={'heart'}
+            quantity={reactions.heart}
+            isDisabled={isDisabledReactions}
+            setIsDisabled={setIsDisabledReactions}
+            appID={appID}
+          />
+          <ReactionItem
+            name={'poop'}
+            quantity={reactions.poop}
+            isDisabled={isDisabledReactions}
+            setIsDisabled={setIsDisabledReactions}
+            appID={appID}
+          />
         </div>
         { isLogged && (
             <div className='dunderlist_item_controls'>

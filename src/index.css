@@ -270,7 +270,7 @@ button:hover {
   display: flex;
 }
 
-.reaction_item_wrap {
+.reaction_item {
   display: flex;
   align-items: center;
   padding: 5px 8px;
@@ -279,23 +279,31 @@ button:hover {
   margin-right: 10px;
   user-select: none;
   transition: all .1s ease-in-out;
+  background-color: #26262c;
 }
 
-.reaction_item_wrap.active {
+.reaction_item.highlighted,
+.reaction_item:hover {
   background-color: #71575b;
 }
 
-.reaction_item_wrap:hover {
-  cursor: pointer;
+.reaction_item.highlighted.disabled:hover {
+  cursor: default;
+  background-color: #71575b;
 }
 
-.reaction_item_wrap img {
+.reaction_item.disabled:hover {
+  background-color: #26262c;
+  cursor: default;
+}
+
+.reaction_item img {
   width: 20px;
   display: block;
   margin-right: 5px;
 }
 
-.reaction_item_wrap span {
+.reaction_item span {
   font-size: 18px;
   display: block;
   font-weight: bold;
@@ -343,6 +351,8 @@ button:hover {
 .parse_gameinfo_btn {
   border-top-right-radius: 17px;
   border-bottom-right-radius: 17px;
+  height: 34px;
+  margin-left: -1px;
 }
 
 .parse_gameinfo_block .error_msg {
@@ -422,6 +432,8 @@ button:hover {
 }
 
 .playedlist_wrap {
+  max-width: 800px;
+  width: 100%;
   margin-top: 30px;
 }
 
@@ -438,7 +450,6 @@ button:hover {
   padding: 10px 42px 10px 10px;
   margin-bottom: 10px;
   position: relative;
-  width: calc(750px - 52px);
 }
 
 .playedlist_item_info_wrap {
@@ -476,4 +487,147 @@ button:hover {
   line-height: 1.1;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  .dunderlist_wrap,
+  .playedlist_wrap {
+    max-width: none;
+    width: calc(100% - 30px);
+    margin: 30px 15px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .dunderlist_item_img_wrap img {
+    width: 200px;
+  }
+
+  .dunderlist_item_title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 580px) {
+  .game_info_form_wrap {
+    width: calc(100% - 30px);
+    margin: 0 15px;
+  }
+
+  .modal_window {
+    max-width: 60vw;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .dunderlist_item_wrap {
+    flex-direction: column;
+  }
+
+  .dunderlist_item_controls {
+    flex-direction: row;
+    right: 10px;
+    top: auto;
+    bottom: 0;
+    height: auto;
+    padding: 5px 0;
+  }
+
+  .dunderlist_item_wrap {
+    padding: 10px 10px 50px 10px;
+  }
+
+  .dunderlist_item_controls .list_item_control:last-child {
+    margin-top: 0;
+    margin-left: 25px;
+  }
+
+  .dunderlist_item_img_wrap img {
+    margin: 0 auto;
+    width: 150px;
+  }
+
+  .dunderlist_item_info_wrap {
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .dunderlist_item_title {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .dunderlist_item_info_wrap a {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 450px) {
+  .main_title {
+    margin: 15px 0;
+    font-size: 24px;
+  }
+
+  .navlink {
+    padding: 15px 10px;
+    width: 100px;
+    font-size: 14px;
+  }
+
+  .add_new_game_btn {
+    font-size: 14px;
+    margin: 15px 0 10px;
+    padding: 10px 15px;
+  }
+
+  .login_form_title {
+    font-size: 20px;
+    margin: 30px 0 15px;
+  }
+
+  .form_field {
+    margin-bottom: 10px;
+  }
+
+  .form_error_msg {
+    font-size: 13px;
+  }
+
+  .parse_gameinfo_block {
+    margin: 0 0 15px;
+  }
+
+  .parse_gameinfo_block p {
+    text-align: center;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 360px) {
+  .playedlist_item_wrap {
+    flex-direction: column;
+    padding: 10px 10px 50px 10px;
+  }
+
+  .playedlist_item_img_wrap {
+    justify-content: center;
+  }
+
+  .playedlist_item_info_wrap {
+    margin: 15px 0 0;
+    align-items: center;
+  }
+
+  .playedlist_item_title {
+    text-align: center;
+  }
+
+  .playedlist_item_controls {
+    flex-direction: row;
+    right: 10px;
+    top: auto;
+    bottom: 0;
+    height: auto;
+    padding: 5px 0;
+  }
 }

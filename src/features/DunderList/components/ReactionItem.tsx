@@ -1,25 +1,44 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { useAddReactionMutation } from '../../api/apiSlice';
 
 type Props = {
-  name: string;
+  name: 'heart' | 'poop';
   quantity: number;
+  isDisabled: boolean;
+  setIsDisabled: (value: boolean) => void;
+  appID: string;
 }
 
-export const ReactionItem: FC<Props> = ({name, quantity}) => {
-  //тимчасово для наглядності
-  const [isActive, setIsActive] = useState<boolean>(false);
-  const [qnt, setQnt] = useState<number>(Number(quantity));
+export const ReactionItem: FC<Props> = ({ name, quantity, isDisabled, setIsDisabled, appID }) => {
+  const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
+  const [addReaction, ] = useAddReactionMutation()
+
+  useEffect(() => {
+    let reactionName = localStorage.getItem('reaction');
+    if(reactionName === name) {
+      setIsHighlighted(true);
+    }
+  })
 
   const handleClick = () => {
-    isActive ? setQnt(qnt - 1) : setQnt(qnt + 1);
-    setIsActive(!isActive);
+    if(!isDisabled) {
+      const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+      if(reactions) {
+        setIsDisabled(true);
+        addReaction({ reactionName: name, appID });
+        reactions[appID] =  { reactionName: name, isReacted: true }
+        localStorage.setItem('reactions', JSON.stringify(reactions));
+      }
+    }
   }
-  //кінець тимчасового блоку
 
   return (
-    <div className={`reaction_item_wrap ${isActive ? 'active' : ''}`} onClick={handleClick}>
+    <button
+      className={`reaction_item ${isHighlighted ? 'highlighted' : ''} ${isDisabled ? 'disabled' : ''}`}
+      onClick={handleClick}
+    >
       <img src={`images/${name}.png`} alt='' />
-      <span>{qnt}</span>
-    </div>
+      <span>{quantity}</span>
+    </button>
   )
 }

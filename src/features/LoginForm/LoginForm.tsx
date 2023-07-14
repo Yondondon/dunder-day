@@ -42,7 +42,9 @@ export const LoginForm = () => {
         }
       })
       .catch((error) => {
-        console.log('error:', error)
+        console.log('error: ', error);
+        setErrorMsg('Ой, щось пішло не так. Сервер не відповідає.')
+        setShowModal(true)
       })
   };
 

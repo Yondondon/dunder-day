@@ -66,6 +66,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Dunderlist', 'Playedlist']
     }),
+    addReaction: builder.mutation({
+      query: (data: {reactionName: 'heart' | 'poop'; appID: string; }) => ({
+        url: '/addReaction',
+        method: 'POST',
+        body: data
+      }),
+      invalidatesTags: ['Dunderlist']
+    }),
   })
 })
 
@@ -78,4 +86,5 @@ export const {
   useRemoveDunderListGameMutation,
   useRemovePlayedListGameMutation,
   useMoveToPlayedListMutation,
+  useAddReactionMutation,
 } = apiSlice;

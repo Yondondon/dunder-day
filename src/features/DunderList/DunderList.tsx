@@ -29,6 +29,13 @@ export const DunderList = () => {
     }
   }, [isError])
 
+  useEffect(() => {
+    const reactions = localStorage.getItem('reactions');
+    if(!reactions) {
+      localStorage.setItem('reactions', JSON.stringify({}))
+    }
+  })
+
   return (
     <div className='dunderlist_wrap'>
       { isFetching && <Loader />}

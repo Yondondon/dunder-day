@@ -110,7 +110,6 @@ exports.getGameInfo = onRequest(
   }
 );
 
-//TODO: перевірка на дублікати
 exports.addNewGame = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
@@ -141,8 +140,6 @@ exports.addNewGame = onRequest(
   }
 );
 
-
-//TODO: перевірка на дублікати
 exports.moveToPlayedList = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
@@ -236,6 +233,29 @@ exports.removePlayedListGame = onRequest(
     });
 
     res.send({ msg: 'Гру видалено зі списку' })
+  }
+);
+
+exports.addReaction = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    
+    const body = req.body;
+    const userQuery = await getFirestore()
+      .collection("dunderlist")
+      .where('appID', '==', body.appID)
+      .get();
+
+    userQuery.forEach((doc: any) => {
+      doc.ref.set({
+        reactions: { 
+          ...doc.data().reactions,
+          [body.reactionName]: doc.data().reactions[body.reactionName] + 1
+        }
+      }, { merge: true })
+    });
+
+    res.send({ msg: 'Реакцію змінено' })
   }
 );
 
