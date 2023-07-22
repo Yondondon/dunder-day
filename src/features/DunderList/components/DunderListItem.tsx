@@ -4,6 +4,7 @@ import { selectIsLogged } from '../../LoginForm/userSlice';
 import { ReactionItem } from './ReactionItem';
 import { useMoveToPlayedListMutation, useRemoveDunderListGameMutation } from '../../api/apiSlice';
 import { ListItemControl } from '../../../components/ListItemControl/ListItemControl';
+import { DateModal } from './DateModal';
 
 type Props = {
   name: string;
@@ -19,39 +20,19 @@ type Props = {
 export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, id, appID, setModalText, setShowModal }) => {
   const isLogged = useAppSelector(selectIsLogged);
   const [removeItem, ] = useRemoveDunderListGameMutation();
-  const [move, ] = useMoveToPlayedListMutation()
-  const [isDisabledReactions, setIsDisabledReactions] = useState<boolean>(false)
+  const [move, ] = useMoveToPlayedListMutation();
+  const [isDisabledReactions, setIsDisabledReactions] = useState<boolean>(false);
+  const [isShowDateModal, setIsShowDateModal] = useState<boolean>(false);
 
   const handleRemoveItem = () => {
     removeItem(id)
       .unwrap()
       .then((response) => {
         console.log(response);
-      })
-      .catch((error) => {
-        console.log('error:', error)
-        setModalText('Ой, схоже сервер не відповідає.')
-        setShowModal()
-      })
-
-    const reactions = JSON.parse(localStorage.getItem('reactions') as any);
-    if(reactions && reactions[appID]) {
-      delete reactions[appID]
-      localStorage.setItem('reactions', JSON.stringify(reactions))
-    }
-  }
-
-  const handleMoveItem = () => {
-    const date: number = Date.now();
-    move({ id, playedDate: date, appID })
-      .unwrap()
-      .then((response) => {
-        if(!response.status) {
-          console.log(response);
-          setModalText(response.msg)
-          setShowModal()
-        } else {
-          console.log(response);
+        const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+        if(reactions && reactions[name]) {
+          delete reactions[name]
+          localStorage.setItem('reactions', JSON.stringify(reactions))
         }
       })
       .catch((error) => {
@@ -59,17 +40,43 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
         setModalText('Ой, схоже сервер не відповідає.')
         setShowModal()
       })
+  }
 
-    const reactions = JSON.parse(localStorage.getItem('reactions') as any);
-    if(reactions && reactions[appID]) {
-      delete reactions[appID]
-      localStorage.setItem('reactions', JSON.stringify(reactions))
-    }
+  const handleShowDateModal = () => {
+    setIsShowDateModal(true)
+  }
+
+  const handleMoveItem = (date: string) => {
+    const seconds = new Date(date).getTime();
+
+    move({ id, playedDate: seconds, name })
+      .unwrap()
+      .then((response) => {
+        if(!response.status) {
+          console.log(response);
+          setModalText(response.msg)
+          setShowModal()
+          setIsShowDateModal(false)
+        } else {
+          console.log(response);
+          const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+          if(reactions && reactions[name]) {
+            delete reactions[name]
+            localStorage.setItem('reactions', JSON.stringify(reactions))
+          }
+        }
+      })
+      .catch((error) => {
+        console.log('error:', error)
+        setModalText('Ой, схоже сервер не відповідає.')
+        setShowModal()
+        setIsShowDateModal(false)
+      })
   }
 
   useEffect(() => {
     const reactions = JSON.parse(localStorage.getItem('reactions') as any);
-    if(reactions && reactions[appID]) {
+    if(reactions && reactions[name]) {
       setIsDisabledReactions(true)
     }
   })
@@ -88,24 +95,25 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
             quantity={reactions.heart}
             isDisabled={isDisabledReactions}
             setIsDisabled={setIsDisabledReactions}
-            appID={appID}
+            gameName={name}
           />
           <ReactionItem
             name={'poop'}
             quantity={reactions.poop}
             isDisabled={isDisabledReactions}
             setIsDisabled={setIsDisabledReactions}
-            appID={appID}
+            gameName={name}
           />
         </div>
         { isLogged && (
             <div className='dunderlist_item_controls'>
               <ListItemControl type='remove' action={handleRemoveItem} />
-              <ListItemControl type='move' action={handleMoveItem} />
+              <ListItemControl type='move' action={handleShowDateModal} />
             </div>
           )
         }
       </div>
+      { isShowDateModal && <DateModal onConfirm={handleMoveItem} /> }
     </div>
   )
 }

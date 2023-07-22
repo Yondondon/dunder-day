@@ -1,1 +1,1 @@
-There is no description yet.
+This is a small application for the personal needs of a friend of mine. React, React Redux, TypeScript for a front-end. It hosted on Firebase. I use Firebase Functions with Node.js for back-end. DB: Firestore Database.

@@ -59,7 +59,7 @@ export const apiSlice = createApi({
       invalidatesTags: ['Playedlist']
     }),
     moveToPlayedList: builder.mutation({
-      query: (data: { id: string; playedDate: number; appID: string; }) => ({
+      query: (data: { id: string; playedDate: number; name: string; }) => ({
         url: '/moveToPlayedList',
         method: 'POST',
         body: data
@@ -67,12 +67,11 @@ export const apiSlice = createApi({
       invalidatesTags: ['Dunderlist', 'Playedlist']
     }),
     addReaction: builder.mutation({
-      query: (data: {reactionName: 'heart' | 'poop'; appID: string; }) => ({
+      query: (data: {reactionName: 'heart' | 'poop'; gameName: string; }) => ({
         url: '/addReaction',
         method: 'POST',
         body: data
       }),
-      invalidatesTags: ['Dunderlist']
     }),
   })
 })

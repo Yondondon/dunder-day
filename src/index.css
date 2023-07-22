@@ -50,6 +50,12 @@ button:hover {
   background-color: #8b1a1a;
 }
 
+input[type='date'] {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
 .modal_background {
   position: fixed;
   top: 0;
@@ -206,8 +212,18 @@ button:hover {
   position: relative;
 }
 
+.dunderlist_item_wrap input[type='date'] {
+  margin: 10px 0;
+  width: 150px;
+}
+
 .dunderlist_item_info_wrap {
   padding: 0 10px;
+}
+
+.dunderlist_item_img_wrap {
+  max-height: 200px;
+  overflow: hidden;
 }
 
 .dunderlist_item_img_wrap img {
@@ -355,12 +371,6 @@ button:hover {
   margin-left: -1px;
 }
 
-.parse_gameinfo_block .error_msg {
-  display: block;
-  margin-top: 15px;
-  color: #ff3c3c;
-}
-
 .game_info_form_wrap {
   width: 500px;
 }
@@ -450,6 +460,7 @@ button:hover {
   padding: 10px 42px 10px 10px;
   margin-bottom: 10px;
   position: relative;
+  align-items: center;
 }
 
 .playedlist_item_info_wrap {
@@ -460,6 +471,10 @@ button:hover {
 .playedlist_item_img_wrap {
   display: flex;
   align-items: center;
+  max-height: 50px;
+  overflow: hidden;
+  width: 100px;
+  flex-shrink: 0;
 }
 
 .playedlist_item_img_wrap img {

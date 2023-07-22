@@ -6,28 +6,37 @@ type Props = {
   quantity: number;
   isDisabled: boolean;
   setIsDisabled: (value: boolean) => void;
-  appID: string;
+  gameName: string;
 }
 
-export const ReactionItem: FC<Props> = ({ name, quantity, isDisabled, setIsDisabled, appID }) => {
+export const ReactionItem: FC<Props> = ({ name, quantity, isDisabled, setIsDisabled, gameName }) => {
   const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
   const [addReaction, ] = useAddReactionMutation()
 
   useEffect(() => {
-    let reactionName = localStorage.getItem('reaction');
-    if(reactionName === name) {
-      setIsHighlighted(true);
+    const reactions = JSON.parse(localStorage.getItem('reactions') as any);
+    if(reactions[gameName] && reactions[gameName].reactionName === name) {
+      setIsHighlighted(true)
     }
   })
 
   const handleClick = () => {
+    
     if(!isDisabled) {
       const reactions = JSON.parse(localStorage.getItem('reactions') as any);
       if(reactions) {
         setIsDisabled(true);
-        addReaction({ reactionName: name, appID });
-        reactions[appID] =  { reactionName: name, isReacted: true }
-        localStorage.setItem('reactions', JSON.stringify(reactions));
+        addReaction({ reactionName: name, gameName })
+          .unwrap()
+          .then((response) => {
+            console.log(response)
+            reactions[gameName] = { reactionName: name, isReacted: true }
+            localStorage.setItem('reactions', JSON.stringify(reactions));
+            window.location.reload()
+          })
+          .catch((error) => {
+            console.log('Ой, щось пішло не так')
+          })
       }
     }
   }

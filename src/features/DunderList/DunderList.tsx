@@ -3,6 +3,7 @@ import { useGetDunderlistQuery } from '../api/apiSlice';
 import { DunderListItem } from './components/DunderListItem';
 import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
 import { Loader } from '../../components/Loader/Loader';
+import { DatePicker } from '../../components/DatePicker/DatePicker';
 
 export const DunderList = () => {
   const {

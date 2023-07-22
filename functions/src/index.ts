@@ -5,7 +5,7 @@ const {logger} = require("firebase-functions");
 const {onRequest} = require("firebase-functions/v2/https");
 
 const {initializeApp} = require("firebase-admin/app");
-const {getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
+const {getFirestore} = require("firebase-admin/firestore");
 
 initializeApp();
 
@@ -114,15 +114,22 @@ exports.addNewGame = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
     
-    const body = req.body;
+    const body: {
+        name: string;
+        gameUrl: string;
+        imageUrl: string;
+        id: string;
+        created: number;
+        appID: string;
+      } = req.body;
 
     const snapshot = await getFirestore()
       .collection("dunderlist")
-      .where('appID', '==', body.appID)
+      .where('name', '==', body.name)
       .get();
 
     if (!snapshot.empty) {
-      res.send({ status: false, msg: 'Така гра вже є у списку'})
+      res.send({ status: false, msg: 'Гра з такою назвою вже є в списку'})
       return;
     }  
 
@@ -148,11 +155,11 @@ exports.moveToPlayedList = onRequest(
 
     const snapshot = await getFirestore()
       .collection("playedlist")
-      .where('appID', '==', body.appID)
+      .where('name', '==', body.name)
       .get();
 
     if (!snapshot.empty) {
-      res.send({ status: false, msg: 'Гра з таким ID уже є в списку'})
+      res.send({ status: false, msg: 'Гра з такою назвою вже є в списку'})
       return;
     }  
 
@@ -182,14 +189,14 @@ exports.moveToPlayedList = onRequest(
       return;
     }  
 
-    snapshot2 .forEach((doc: any) => {
+    snapshot2.forEach((doc: any) => {
       gameToMove = {
         name: doc.data().name,
         gameUrl: doc.data().gameUrl,
         imageUrl: doc.data().imageUrl,
         id: Math.random().toString(),
         playedDate: body.playedDate,
-        appID: body.appID
+        appID: doc.data().appID,
       }
       doc.ref.delete()
     });
@@ -243,7 +250,7 @@ exports.addReaction = onRequest(
     const body = req.body;
     const userQuery = await getFirestore()
       .collection("dunderlist")
-      .where('appID', '==', body.appID)
+      .where('name', '==', body.gameName)
       .get();
 
     userQuery.forEach((doc: any) => {
