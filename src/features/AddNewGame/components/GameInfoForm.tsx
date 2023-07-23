@@ -40,11 +40,11 @@ export const GameInfoForm: FC<Props> = (props) => {
     addNewGame(formData)
       .unwrap()
       .then((result) => {
-        if(result.status === 'success') {
+        if(result.success) {
           console.log(result);
           setShowModal(true)
           setModalMsg('Гру додано в Дундерсписок!')
-        } else if(!result.status) {
+        } else {
           setShowModal(true)
           setModalMsg(result.msg)
         }

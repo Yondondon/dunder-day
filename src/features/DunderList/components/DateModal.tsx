@@ -3,9 +3,10 @@ import { DatePicker } from '../../../components/DatePicker/DatePicker';
 
 type Props = {
   onConfirm: (date: string) => void;
+  isLoading: boolean;
 }
 
-export const DateModal: FC<Props> = ({ onConfirm }) => {
+export const DateModal: FC<Props> = ({ onConfirm, isLoading }) => {
   const [date, setDate] = useState<string>('')
 
   return (
@@ -13,7 +14,7 @@ export const DateModal: FC<Props> = ({ onConfirm }) => {
       <div className='modal_window'>
         <span>Коли гралися?</span>
         <DatePicker onChange={val => setDate(val)} />
-        <button onClick={() => onConfirm(date)}>OK</button>
+        <button onClick={() => onConfirm(date)} disabled={isLoading}>OK</button>
       </div>
     </div>
   )

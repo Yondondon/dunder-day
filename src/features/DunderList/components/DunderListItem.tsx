@@ -20,7 +20,7 @@ type Props = {
 export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, id, appID, setModalText, setShowModal }) => {
   const isLogged = useAppSelector(selectIsLogged);
   const [removeItem, ] = useRemoveDunderListGameMutation();
-  const [move, ] = useMoveToPlayedListMutation();
+  const [move, { isLoading } ] = useMoveToPlayedListMutation();
   const [isDisabledReactions, setIsDisabledReactions] = useState<boolean>(false);
   const [isShowDateModal, setIsShowDateModal] = useState<boolean>(false);
 
@@ -47,23 +47,26 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
   }
 
   const handleMoveItem = (date: string) => {
-    const seconds = new Date(date).getTime();
+    const currentDate = new Date()
+    const hours = new Date(date).setHours(currentDate.getHours());
+    const minutes = new Date(hours).setMinutes(currentDate.getMinutes());
+    const seconds = new Date(minutes).setSeconds(currentDate.getSeconds());
 
     move({ id, playedDate: seconds, name })
       .unwrap()
       .then((response) => {
-        if(!response.status) {
-          console.log(response);
-          setModalText(response.msg)
-          setShowModal()
-          setIsShowDateModal(false)
-        } else {
+        if(response.success) {
           console.log(response);
           const reactions = JSON.parse(localStorage.getItem('reactions') as any);
           if(reactions && reactions[name]) {
             delete reactions[name]
             localStorage.setItem('reactions', JSON.stringify(reactions))
           }
+        } else {
+          console.log(response);
+          setModalText(response.msg)
+          setShowModal()
+          setIsShowDateModal(false)
         }
       })
       .catch((error) => {
@@ -113,7 +116,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
           )
         }
       </div>
-      { isShowDateModal && <DateModal onConfirm={handleMoveItem} /> }
+      { isShowDateModal && <DateModal isLoading={isLoading} onConfirm={handleMoveItem} /> }
     </div>
   )
 }

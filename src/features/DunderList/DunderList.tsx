@@ -16,8 +16,8 @@ export const DunderList = () => {
 
   let sortedDunderlist: any[] = [];
 
-  if(dunderlist && dunderlist.length > 0) {
-    sortedDunderlist = [...dunderlist]
+  if(dunderlist && dunderlist.data.list.length > 0) {
+    sortedDunderlist = [...dunderlist.data.list]
     sortedDunderlist.sort((a: any, b: any) => {
       return b.created - a.created;
     })

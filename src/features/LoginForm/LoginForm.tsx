@@ -30,8 +30,8 @@ export const LoginForm = () => {
     loginQuery(data)
       .unwrap()
       .then((result) => {
-        if(result.status === 'success') {
-          const userToken = result.data;
+        if(result.success) {
+          const userToken = result.data.userToken;
           const expires = new Date(Date.now() + 7 * 86400000)
           document.cookie = `userToken=${userToken};expires=${expires};path=/`;
           dispatch(login(userToken))

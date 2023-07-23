@@ -35,17 +35,18 @@ export const AddNewGame = () => {
     if(appID.length > 0) {
       getGameInfo(appID)
         .unwrap()
-        .then((result: any) => {
-          if(result[appID].success === true) {
+        .then((response: any) => {
+          if(response.success) {
             const data = {
-              name: result[appID].data.name,
-              imageUrl: result[appID].data.header_image
+              name: response.data[appID].data.name,
+              imageUrl: response.data[appID].data.header_image
             }
             setParsedGameInfo(data)
             setUsedAppID(appID)
             setAppID('')
-          } else if (result[appID].success === false) {
-            setErrorMsg('Такого ID не існує, або якісь проблеми у Стіма. Спробуй пізніше.')
+          } else {
+            setErrorMsg('Гри з таким ID не існує, або проблеми у Стіма. Спробуй пізніше.')
+            setShowModal(true)
           }
         })
         .catch((error: any) => {

@@ -72,6 +72,15 @@ export const apiSlice = createApi({
         method: 'POST',
         body: data
       }),
+      invalidatesTags: ['Dunderlist']
+    }),
+    loadMorePlayedList: builder.mutation({
+      query: (id: string) => ({
+        url: '/loadMorePlayedList',
+        method: 'POST',
+        body: id
+      }),
+      // invalidatesTags: ['Playedlist']
     }),
   })
 })
@@ -86,4 +95,5 @@ export const {
   useRemovePlayedListGameMutation,
   useMoveToPlayedListMutation,
   useAddReactionMutation,
+  useLoadMorePlayedListMutation,
 } = apiSlice;

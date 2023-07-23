@@ -11,9 +11,10 @@ type Props = {
   gameUrl: string;
   playedDate: number;
   id: string;
+  onRemove: (id: string) => void;
 }
 
-export const PlayedListItem: FC<Props> = ({ name, imageUrl, gameUrl, playedDate, id }) => {
+export const PlayedListItem: FC<Props> = ({ name, imageUrl, gameUrl, playedDate, id, onRemove }) => {
   const isLogged = useAppSelector(selectIsLogged);
   const [removeItem, ] = useRemovePlayedListGameMutation()
 
@@ -22,6 +23,7 @@ export const PlayedListItem: FC<Props> = ({ name, imageUrl, gameUrl, playedDate,
       .unwrap()
       .then((response) => {
         console.log(response);
+        onRemove(id)
       })
   }
 

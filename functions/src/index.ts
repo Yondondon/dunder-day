@@ -20,14 +20,15 @@ exports.getDunderlist = onRequest(
       result.push(doc.data())
     });
 
-    res.json(result);
+    res.json({ success: true, data: { list: result } });
   }
 );
 
 exports.getPlayedlist = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
-    const list = await getFirestore().collection("playedlist").get()
+    const limit: number = 10;
+    const list = await getFirestore().collection("playedlist").orderBy('playedDate', 'desc').limit(limit).get()
 
     let result: any[] = [];
 
@@ -35,7 +36,18 @@ exports.getPlayedlist = onRequest(
       result.push(doc.data())
     });
 
-    res.json(result);
+    if(list.docs.length < limit) {
+      res.send({
+        success: true,
+        data: { list: result, isLoadable: false }
+      })
+      return;
+    }
+
+    res.send({
+      success: true,
+      data: { list: result, isLoadable: true }
+    })
   }
 );
 
@@ -49,7 +61,7 @@ exports.login = onRequest(
       .where('username', '==', body.login)
       .get();
     if(userQuery.empty) {
-      res.json({ status: false, msg: 'Такого дундика не існує.' })
+      res.send({ success: false, msg: 'Такого дундика не існує.' })
       return;
     }
 
@@ -73,11 +85,14 @@ exports.login = onRequest(
     });
 
     if(user.password !== body.password ) {
-      res.json({ status: false, msg: 'Неправильний пароль. Запам\'ятай, пароль: "ТЕТРІАНДОХ".' })
+      res.send({
+        success: false,
+        msg: 'Неправильний пароль. Запам\'ятай, пароль: "ТЕТРІАНДОХ".' 
+      })
       return;
     }
     
-    res.send({ status: 'success', data: user.token })
+    res.send({ success: true, data: { userToken: user.token } })
   }
 );
 
@@ -100,12 +115,12 @@ exports.getGameInfo = onRequest(
       res.on('end', () => {
         console.log('Response ended.');
         const result = JSON.parse(Buffer.concat(data).toString());
-        response.send(result)
+        response.send({ success: true, data: result })
       });
 
     }).on('error', (err: any) => {
       console.log('Error: ', err.message);
-      response.send({ msg: 'Сталася помилка при запиті'})
+      response.send({ success: false, msg: 'Сталася помилка при запиті'})
     });
   }
 );
@@ -129,7 +144,7 @@ exports.addNewGame = onRequest(
       .get();
 
     if (!snapshot.empty) {
-      res.send({ status: false, msg: 'Гра з такою назвою вже є в списку'})
+      res.send({ success: false, msg: 'Гра з такою назвою вже є в списку' })
       return;
     }  
 
@@ -143,7 +158,7 @@ exports.addNewGame = onRequest(
         },
       });
 
-    res.send({ status: 'success', msg: 'Гру додано у дундерсписок' })
+    res.send({ success: true, msg: 'Гру додано у дундерсписок' })
   }
 );
 
@@ -159,7 +174,7 @@ exports.moveToPlayedList = onRequest(
       .get();
 
     if (!snapshot.empty) {
-      res.send({ status: false, msg: 'Гра з такою назвою вже є в списку'})
+      res.send({ success: false, msg: 'Гра з такою назвою вже є в списку' })
       return;
     }  
 
@@ -185,7 +200,7 @@ exports.moveToPlayedList = onRequest(
     };
 
     if (snapshot2.empty) {
-      res.send({ status: false, msg: 'В базі немає гри з таким ID'})
+      res.send({ success: false, msg: 'В базі немає гри з таким ID' })
       return;
     }  
 
@@ -203,7 +218,7 @@ exports.moveToPlayedList = onRequest(
 
     await getFirestore().collection("playedlist").add(gameToMove);
 
-    res.send({ status: 'success', msg: 'Гру перенесено до списку зіграних'})
+    res.send({ success: true, msg: 'Гру перенесено до списку зіграних' })
   }
 );
 
@@ -221,7 +236,7 @@ exports.removeDunderListGame = onRequest(
       doc.ref.delete()
     });
 
-    res.send({ msg: 'Гру видалено зі списку' })
+    res.send({ success: true, msg: 'Гру видалено зі списку' })
   }
 );
 
@@ -239,7 +254,7 @@ exports.removePlayedListGame = onRequest(
       doc.ref.delete()
     });
 
-    res.send({ msg: 'Гру видалено зі списку' })
+    res.send({ success: true, msg: 'Гру видалено зі списку' })
   }
 );
 
@@ -262,8 +277,34 @@ exports.addReaction = onRequest(
       }, { merge: true })
     });
 
-    res.send({ msg: 'Реакцію змінено' })
+    res.send({ success: true,  msg: 'Реакцію змінено' })
   }
 );
 
+exports.loadMorePlayedList = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    
+    const lastItemId = req.body;
+
+    const last = await getFirestore().collection("playedlist").where('id', '==', lastItemId).get();
+    const index = last.docs[0].data().playedDate;
+    const limit: number = 10;
+
+    const loadMoreBatch = await getFirestore().collection("playedlist").orderBy('playedDate', 'desc').startAfter(index).limit(limit).get();
+
+    let result: any[] = [];
+
+    loadMoreBatch.forEach((doc: any) => {
+      result.push(doc.data())
+    });
+
+    if(loadMoreBatch.docs.length < limit) {
+      res.send({ success: true, data: { list: result, isLoadable: false }});
+      return;
+    }
+
+    res.send({ success: true, data: { list: result, isLoadable: true }});
+  }
+);
 

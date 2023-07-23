@@ -194,7 +194,8 @@ input[type='date'] {
 .dunderlist_wrap {
   max-width: 800px;
   width: 100%;
-  margin-top: 30px;
+  position: relative;
+  padding-top: 80px;
 }
 
 .dunderlist_wrap:empty::after {
@@ -202,6 +203,15 @@ input[type='date'] {
   text-align: center;
   font-style: italic;
   display: block;
+}
+
+.dunderlist_wrap .loader,
+.playedlist_wrap .loader {
+  margin: 0;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .dunderlist_item_wrap {
@@ -224,6 +234,7 @@ input[type='date'] {
 .dunderlist_item_img_wrap {
   max-height: 200px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .dunderlist_item_img_wrap img {
@@ -444,7 +455,8 @@ input[type='date'] {
 .playedlist_wrap {
   max-width: 800px;
   width: 100%;
-  margin-top: 30px;
+  position: relative;
+  padding-top: 80px;
 }
 
 .playedlist_wrap:empty::after {
@@ -504,12 +516,39 @@ input[type='date'] {
   margin-bottom: 10px;
 }
 
+.playedlist_loadmore_btn_wrap {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.playedlist_loadmore_btn {
+  transition: all .4s ease-in-out;
+  position: relative;
+  font-size: 16px;
+  border-radius: 18px;
+}
+
+.playedlist_loadmore_btn.loading span {
+  opacity: 0;
+}
+
+.playedlist_loadmore_btn img {
+  display: block;
+  width: 28px;
+  border-radius: 50%;
+  position: absolute;
+  top: calc(50% - 14px);
+  left: calc(50% - 14px);
+  animation: 3s linear 0s infinite loading;
+}
+
 @media (max-width: 900px) {
   .dunderlist_wrap,
   .playedlist_wrap {
     max-width: none;
     width: calc(100% - 30px);
-    margin: 30px 15px 0;
+    margin: 0 15px;
   }
 }
 
@@ -578,6 +617,20 @@ input[type='date'] {
 }
 
 @media (max-width: 450px) {
+  .loader img {
+    width: 30px;
+  }
+
+  .dunderlist_wrap,
+  .playedlist_wrap {
+    padding-top: 60px;
+  }
+
+  .dunderlist_wrap .loader,
+  .playedlist_wrap .loader {
+    top: 10px;
+  }
+
   .main_title {
     margin: 15px 0;
     font-size: 24px;
