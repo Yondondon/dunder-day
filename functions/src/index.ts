@@ -28,8 +28,9 @@ exports.getPlayedlist = onRequest(
   { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
   async (req: any, res: any) => {
     const limit: number = 10;
-    const list = await getFirestore().collection("playedlist").orderBy('playedDate', 'desc').limit(limit).get()
-
+    const list = await getFirestore().collection("playedlist").orderBy("playedDate", "desc").limit(limit).get();
+    const collection = await getFirestore().collection("playedlist").get();
+    const gamesQuantity = collection.docs.length;
     let result: any[] = [];
 
     list.forEach((doc: any) => {
@@ -39,14 +40,22 @@ exports.getPlayedlist = onRequest(
     if(list.docs.length < limit) {
       res.send({
         success: true,
-        data: { list: result, isLoadable: false }
+        data: {
+          list: result,
+          isLoadable: false,
+          gamesQuantity,
+        }
       })
       return;
     }
 
     res.send({
       success: true,
-      data: { list: result, isLoadable: true }
+      data: {
+        list: result,
+        isLoadable: true,
+        gamesQuantity,
+      }
     })
   }
 );
@@ -58,18 +67,18 @@ exports.login = onRequest(
     const body = req.body;
     const userQuery = await getFirestore()
       .collection("users")
-      .where('username', '==', body.login)
+      .where("username", "==", body.login)
       .get();
     if(userQuery.empty) {
-      res.send({ success: false, msg: 'Такого дундика не існує.' })
+      res.send({ success: false, msg: "Такого дундика не існує." })
       return;
     }
 
     let token = Math.random().toString();
 
     let user: {username: string; password: string; token: string;} = {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       token
     }; 
     userQuery.forEach((doc: any) => {
@@ -87,7 +96,7 @@ exports.login = onRequest(
     if(user.password !== body.password ) {
       res.send({
         success: false,
-        msg: 'Неправильний пароль. Запам\'ятай, пароль: "ТЕТРІАНДОХ".' 
+        msg: "Неправильний пароль. Запам\'ятай, пароль: 'ТЕТРІАНДОХ'." 
       })
       return;
     }
@@ -104,23 +113,23 @@ exports.getGameInfo = onRequest(
 
     https.get(`https://store.steampowered.com/api/appdetails?appids=${appID}`, (res: any) => {
       let data: any[] = [];
-      const headerDate = res.headers && res.headers.date ? res.headers.date : 'no response date';
-      console.log('Status Code:', res.statusCode);
-      console.log('Date in Response header:', headerDate);
+      const headerDate = res.headers && res.headers.date ? res.headers.date : "no response date";
+      console.log("Status Code:", res.statusCode);
+      console.log("Date in Response header:", headerDate);
 
-      res.on('data', (chunk: any) => {
+      res.on("data", (chunk: any) => {
         data.push(chunk);
       });
 
-      res.on('end', () => {
-        console.log('Response ended.');
+      res.on("end", () => {
+        console.log("Response ended.");
         const result = JSON.parse(Buffer.concat(data).toString());
         response.send({ success: true, data: result })
       });
 
-    }).on('error', (err: any) => {
-      console.log('Error: ', err.message);
-      response.send({ success: false, msg: 'Сталася помилка при запиті'})
+    }).on("error", (err: any) => {
+      console.log("Error: ", err.message);
+      response.send({ success: false, msg: "Сталася помилка при запиті"})
     });
   }
 );
@@ -140,11 +149,11 @@ exports.addNewGame = onRequest(
 
     const snapshot = await getFirestore()
       .collection("dunderlist")
-      .where('name', '==', body.name)
+      .where("name", "==", body.name)
       .get();
 
     if (!snapshot.empty) {
-      res.send({ success: false, msg: 'Гра з такою назвою вже є в списку' })
+      res.send({ success: false, msg: "Гра з такою назвою вже є в списку" })
       return;
     }  
 
@@ -158,7 +167,7 @@ exports.addNewGame = onRequest(
         },
       });
 
-    res.send({ success: true, msg: 'Гру додано у дундерсписок' })
+    res.send({ success: true, msg: "Гру додано у дундерсписок" })
   }
 );
 
@@ -170,17 +179,17 @@ exports.moveToPlayedList = onRequest(
 
     const snapshot = await getFirestore()
       .collection("playedlist")
-      .where('name', '==', body.name)
+      .where("name", "==", body.name)
       .get();
 
     if (!snapshot.empty) {
-      res.send({ success: false, msg: 'Гра з такою назвою вже є в списку' })
+      res.send({ success: false, msg: "Гра з такою назвою вже є в списку" })
       return;
     }  
 
     const snapshot2 = await getFirestore()
       .collection("dunderlist")
-      .where('id', '==', body.id)
+      .where("id", "==", body.id)
       .get();
 
     let gameToMove: { 
@@ -191,16 +200,16 @@ exports.moveToPlayedList = onRequest(
       playedDate: number;
       appID: string;
     } = {
-      name: '',
-      gameUrl: '',
-      imageUrl: '',
-      id: '',
+      name: "",
+      gameUrl: "",
+      imageUrl: "",
+      id: "",
       playedDate: 0,
-      appID: ''
+      appID: ""
     };
 
     if (snapshot2.empty) {
-      res.send({ success: false, msg: 'В базі немає гри з таким ID' })
+      res.send({ success: false, msg: "В базі немає гри з таким ID" })
       return;
     }  
 
@@ -218,7 +227,7 @@ exports.moveToPlayedList = onRequest(
 
     await getFirestore().collection("playedlist").add(gameToMove);
 
-    res.send({ success: true, msg: 'Гру перенесено до списку зіграних' })
+    res.send({ success: true, msg: "Гру перенесено до списку зіграних" })
   }
 );
 
@@ -229,14 +238,14 @@ exports.removeDunderListGame = onRequest(
     const body = req.body;
     const userQuery = await getFirestore()
       .collection("dunderlist")
-      .where('id', '==', body)
+      .where("id", "==", body)
       .get();
 
     userQuery.forEach((doc: any) => {
       doc.ref.delete()
     });
 
-    res.send({ success: true, msg: 'Гру видалено зі списку' })
+    res.send({ success: true, msg: "Гру видалено зі списку" })
   }
 );
 
@@ -247,14 +256,14 @@ exports.removePlayedListGame = onRequest(
     const body = req.body;
     const userQuery = await getFirestore()
       .collection("playedlist")
-      .where('id', '==', body)
+      .where("id", "==", body)
       .get();
 
     userQuery.forEach((doc: any) => {
       doc.ref.delete()
     });
 
-    res.send({ success: true, msg: 'Гру видалено зі списку' })
+    res.send({ success: true, msg: "Гру видалено зі списку" })
   }
 );
 
@@ -265,7 +274,7 @@ exports.addReaction = onRequest(
     const body = req.body;
     const userQuery = await getFirestore()
       .collection("dunderlist")
-      .where('name', '==', body.gameName)
+      .where("name", "==", body.gameName)
       .get();
 
     userQuery.forEach((doc: any) => {
@@ -277,7 +286,7 @@ exports.addReaction = onRequest(
       }, { merge: true })
     });
 
-    res.send({ success: true,  msg: 'Реакцію змінено' })
+    res.send({ success: true,  msg: "Реакцію змінено" })
   }
 );
 
@@ -287,11 +296,11 @@ exports.loadMorePlayedList = onRequest(
     
     const lastItemId = req.body;
 
-    const last = await getFirestore().collection("playedlist").where('id', '==', lastItemId).get();
+    const last = await getFirestore().collection("playedlist").where("id", "==", lastItemId).get();
     const index = last.docs[0].data().playedDate;
     const limit: number = 10;
 
-    const loadMoreBatch = await getFirestore().collection("playedlist").orderBy('playedDate', 'desc').startAfter(index).limit(limit).get();
+    const loadMoreBatch = await getFirestore().collection("playedlist").orderBy("playedDate", "desc").startAfter(index).limit(limit).get();
 
     let result: any[] = [];
 

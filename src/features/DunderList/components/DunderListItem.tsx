@@ -15,9 +15,10 @@ type Props = {
   appID: string;
   setModalText: (text: string) => void;
   setShowModal: () => void;
+  onAction: () => void;
 }
 
-export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, id, appID, setModalText, setShowModal }) => {
+export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, id, appID, setModalText, setShowModal, onAction }) => {
   const isLogged = useAppSelector(selectIsLogged);
   const [removeItem, ] = useRemoveDunderListGameMutation();
   const [move, { isLoading } ] = useMoveToPlayedListMutation();
@@ -34,6 +35,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
           delete reactions[name]
           localStorage.setItem('reactions', JSON.stringify(reactions))
         }
+        onAction()
       })
       .catch((error) => {
         console.log('error:', error)
@@ -62,6 +64,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
             delete reactions[name]
             localStorage.setItem('reactions', JSON.stringify(reactions))
           }
+          onAction()
         } else {
           console.log(response);
           setModalText(response.msg)
@@ -99,6 +102,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
             isDisabled={isDisabledReactions}
             setIsDisabled={setIsDisabledReactions}
             gameName={name}
+            onReaction={() => onAction()}
           />
           <ReactionItem
             name={'poop'}
@@ -106,6 +110,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
             isDisabled={isDisabledReactions}
             setIsDisabled={setIsDisabledReactions}
             gameName={name}
+            onReaction={() => onAction()}
           />
         </div>
         { isLogged && (

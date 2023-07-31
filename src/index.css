@@ -194,15 +194,34 @@ input[type='date'] {
 .dunderlist_wrap {
   max-width: 800px;
   width: 100%;
-  position: relative;
-  padding-top: 80px;
+  padding-top: 15px;
 }
 
-.dunderlist_wrap:empty::after {
-  content: 'У списку поки нема ігорів :с';
+.no_list_items {
   text-align: center;
   font-style: italic;
   display: block;
+}
+
+.dunderlist_search_filter_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dunderlist_search {
+  max-width: 350px;
+  width: calc(100% - 30px);
+}
+
+.dunderlist_filter {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.dunderlist_filter p {
+  margin: 0 15px 0 0;
 }
 
 .dunderlist_wrap .loader,
@@ -212,6 +231,11 @@ input[type='date'] {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.loader_wrap {
+  height: 80px;
+  position: relative;
 }
 
 .dunderlist_item_wrap {
@@ -254,7 +278,7 @@ input[type='date'] {
 }
 
 .dunderlist_item_title {
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1.1;
   font-weight: bold;
   margin-bottom: 10px;
@@ -349,7 +373,7 @@ input[type='date'] {
   text-transform: uppercase;
   text-align: center;
   border: none;
-  margin: 30px 0 10px;
+  margin: 15px 0 10px;
   border-radius: 26px;
 }
 
@@ -455,8 +479,20 @@ input[type='date'] {
 .playedlist_wrap {
   max-width: 800px;
   width: 100%;
-  position: relative;
-  padding-top: 80px;
+}
+
+.games_played {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 5px 0;
+  font-style: italic;
+}
+
+.games_played img {
+  width: 28px;
+  margin-left: 10px;
+  border-radius: 50%;
 }
 
 .playedlist_wrap:empty::after {
@@ -621,9 +657,8 @@ input[type='date'] {
     width: 30px;
   }
 
-  .dunderlist_wrap,
-  .playedlist_wrap {
-    padding-top: 60px;
+  .loader_wrap {
+    height: 50px;
   }
 
   .dunderlist_wrap .loader,
@@ -672,6 +707,10 @@ input[type='date'] {
 }
 
 @media (max-width: 360px) {
+  .dunderlist_filter {
+    font-size: 14px;
+  }
+
   .playedlist_item_wrap {
     flex-direction: column;
     padding: 10px 10px 50px 10px;

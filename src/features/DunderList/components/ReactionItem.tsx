@@ -7,9 +7,10 @@ type Props = {
   isDisabled: boolean;
   setIsDisabled: (value: boolean) => void;
   gameName: string;
+  onReaction: () => void;
 }
 
-export const ReactionItem: FC<Props> = ({ name, quantity, isDisabled, setIsDisabled, gameName }) => {
+export const ReactionItem: FC<Props> = ({ name, quantity, isDisabled, setIsDisabled, gameName, onReaction }) => {
   const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
   const [addReaction, ] = useAddReactionMutation()
 
@@ -32,7 +33,7 @@ export const ReactionItem: FC<Props> = ({ name, quantity, isDisabled, setIsDisab
             console.log(response)
             reactions[gameName] = { reactionName: name, isReacted: true }
             localStorage.setItem('reactions', JSON.stringify(reactions));
-            window.location.reload()
+            onReaction()
           })
           .catch((error) => {
             console.log('Ой, щось пішло не так')

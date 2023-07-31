@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import Select from 'react-select';
-import { useGetDunderlistQuery } from '../api/apiSlice';
+import { useGetDunderlistQuery, useLazyGetDunderlistQuery } from '../api/apiSlice';
 import { DunderListItem } from './components/DunderListItem';
 import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
 import { Loader } from '../../components/Loader/Loader';
+import { Filter } from './components/Filter';
 
 type SortOptionType = {
   value: string;
@@ -11,9 +11,9 @@ type SortOptionType = {
 }
 
 const sortOptions: SortOptionType[] = [
-  { value: 'date', label: 'Новизна' },
-  { value: 'heart', label: 'Лайки' },
-  { value: 'poop', label: 'Дизлайки' },
+  { value: 'date', label: 'Свіжістю' },
+  { value: 'heart', label: 'Лайками' },
+  { value: 'poop', label: 'Дизлайками' },
 ]
 
 export const DunderList = () => {
@@ -21,24 +21,24 @@ export const DunderList = () => {
     data: dunderlist,
     isFetching,
     isError,
+    isSuccess
   } = useGetDunderlistQuery();
+  const [getDunderlist, results] = useLazyGetDunderlistQuery();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalMsg, setModalMsg] = useState<string>('');
   const [list, setList] = useState([]) as any[];
   const [searchVal, setSearchVal] = useState<string>('');
   const [sortFilter, setSortFilter] = useState(sortOptions[0]);
 
-  let sortedDunderlist: any[] = [];
-
   useEffect(() => {
-    if(dunderlist && dunderlist.data.list.length > 0) {
-      sortedDunderlist = [...dunderlist.data.list]
+    if(isSuccess) {
+      let sortedDunderlist: any[] = [...dunderlist.data.list]
       sortedDunderlist.sort((a: any, b: any) => {
         return b.created - a.created;
       })
       setList(sortedDunderlist)
     }
-  }, [dunderlist])
+  }, [isSuccess])
 
   useEffect(() => {
     if(isError) {
@@ -56,6 +56,7 @@ export const DunderList = () => {
 
   useEffect(() => {
     const arr = [...list];
+    if(arr.length === 0) return;
     switch(sortFilter.value) {
       case 'date':
         arr.sort((a: any, b: any) => {
@@ -78,6 +79,13 @@ export const DunderList = () => {
     setList(arr)
   }, [sortFilter])
 
+  useEffect(() => {
+    if(results && results.data) {
+      const fetchedData = results.data.data.list;
+      setList(fetchedData)
+    }
+  }, [results])
+
   const renderList = () => {
     const filteredList = list.filter((item: any) => item.name.toLowerCase().includes(searchVal));
     return filteredList.map((item: any) => {
@@ -92,6 +100,7 @@ export const DunderList = () => {
           appID={item.appID}
           setModalText={(text: string) => setModalMsg(text)}
           setShowModal={() => {setShowModal(true)}}
+          onAction={() => getDunderlist()}
         />
       )
     })
@@ -107,17 +116,23 @@ export const DunderList = () => {
 
   return (
     <div className='dunderlist_wrap'>
-      <input
-        type='text'
-        onChange={(e) => handleSearch(e)} value={searchVal}
-        placeholder='Пошук...'
-      />
-      <Select 
-        defaultValue={sortFilter}
-        onChange={handleSelect}
-        options={sortOptions}
-      />
-      { isFetching && <Loader />}
+      <div className='dunderlist_search_filter_wrap'>
+        <Filter
+          defaultValue={sortFilter}
+          onChange={handleSelect}
+          options={sortOptions}
+        />
+        <input
+          type='text'
+          className='dunderlist_search'
+          onChange={(e) => handleSearch(e)} value={searchVal}
+          placeholder='Пошук...'
+        />
+      </div>
+      <div className='loader_wrap'>
+        { isFetching && <Loader />}
+      </div>
+      { list.length === 0 && <span className='no_list_items'>У списку поки нема ігорів :с</span>}
       { renderList() }
       { showModal && (
           <ModalWindow

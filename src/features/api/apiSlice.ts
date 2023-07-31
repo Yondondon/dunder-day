@@ -87,6 +87,8 @@ export const apiSlice = createApi({
 
 export const {
   useGetDunderlistQuery,
+  useLazyGetDunderlistQuery,
+  useLazyGetPlayedlistQuery,
   useGetPlayedlistQuery,
   useLoginMutation,
   useGetGameInfoMutation,

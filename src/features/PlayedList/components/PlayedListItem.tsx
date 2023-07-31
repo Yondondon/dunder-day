@@ -34,7 +34,7 @@ export const PlayedListItem: FC<Props> = ({ name, imageUrl, gameUrl, playedDate,
       </div>
       <div className='playedlist_item_info_wrap'>
         <div className='playedlist_item_title'>{name}</div>
-        { gameUrl && <a href={gameUrl} target='_blank'>Посилання на гру</a> }
+        { gameUrl && <a href={gameUrl} target='_blank' rel='noreferrer'>Посилання на гру</a> }
         <div className='playedlist_item_date'>Зіграно: {secondsToDate(playedDate)}</div>
         { isLogged && (
             <div className='playedlist_item_controls'>

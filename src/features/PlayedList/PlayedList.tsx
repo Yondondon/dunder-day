@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useGetPlayedlistQuery, useLoadMorePlayedListMutation } from '../api/apiSlice';
+import { useEffect, useState } from 'react';
+import {
+  useGetPlayedlistQuery,
+  useLazyGetPlayedlistQuery,
+  useLoadMorePlayedListMutation,
+} from '../api/apiSlice';
 import { PlayedListItem } from './components/PlayedListItem';
 import { Loader } from '../../components/Loader/Loader';
 import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
@@ -11,17 +15,18 @@ export const PlayedList = () => {
     isFetching,
     isError,
   } = useGetPlayedlistQuery();
+  const [getPlayedlist, results] = useLazyGetPlayedlistQuery()
   const [loadMore, { isLoading }] = useLoadMorePlayedListMutation();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [playedlist, setPlayedlist] = useState<any[]>([]);
   const [isLoadable, setIsLoadable] = useState<boolean>(false);
+  const [gamesQuantity, setGamesQuantity] = useState<number>(0);
 
-  //TODO: некритична проблема - якщо видалити усі елементи, 
-  //то підвантажується нові з останнім видаленим(тобто він в списку є, а в базі його вже нема)
   useEffect(() => {
     if(fetchedData && fetchedData.data.list.length > 0 && playedlist.length === 0) {
       setPlayedlist(fetchedData.data.list)
       setIsLoadable(fetchedData.data.isLoadable);
+      setGamesQuantity(fetchedData.data.gamesQuantity);
     }
   })
 
@@ -35,11 +40,12 @@ export const PlayedList = () => {
     const lastItemId: string = playedlist[playedlist.length - 1].id;
     loadMore(lastItemId)
       .unwrap()
-      .then((response) => {
+      .then((response: any) => {
         if(response.success) {
           console.log(response);
           const temp = playedlist.concat(response.data.list);
           setPlayedlist(temp);
+          
           if(!response.data.isLoadable) {
             setIsLoadable(false);
           }
@@ -53,11 +59,35 @@ export const PlayedList = () => {
   const handleRemove = (id: string) => {
     const filtredList = playedlist.filter(item => item.id !== id)
     setPlayedlist(filtredList)
+    getPlayedlist()
   }
+  
+  useEffect(() => {
+    if(results && results.data) {
+      setPlayedlist(results.data.data.list)
+      setGamesQuantity(results.data.data.gamesQuantity)
+    }
+  }, [results])
 
   return (
     <div className='playedlist_wrap'>
-      { isFetching && <Loader />}
+      {/* <PlayedListItem
+        key={Math.random().toString()}
+        name={'aaa'}
+        imageUrl={''}
+        gameUrl={''}
+        id={'asadasd'}
+        playedDate={1}
+        onRemove={handleRemove}
+      /> */}
+      <div className='games_played'>
+        <span>Дундер-ігор зіграно: {gamesQuantity}</span>
+        { gamesQuantity === 69 && <img src='images/jerry.jpg' alt='' /> }
+      </div>
+      <div className='loader_wrap'>
+        { isFetching && <Loader />}
+      </div>
+      { playedlist.length === 0 && <span className='no_list_items'>У списку поки нема ігорів :с</span>}
       { playedlist && playedlist.map((item: any) => {
         return (
           <PlayedListItem
