@@ -94,7 +94,7 @@ export const DunderListItem: FC<Props> = ({ name, gameUrl, imageUrl, reactions, 
       </div>
       <div className='dunderlist_item_info_wrap'>
         <div className='dunderlist_item_title'>{name}</div>
-        { gameUrl && <a href={gameUrl} target='_blank' rel="noreferrer">Посилання на гру</a> }
+        { gameUrl && <a href={gameUrl} target='_blank' rel='noreferrer'>Посилання на гру</a> }
         <div className='reactions_wrap'>
           <ReactionItem
             name={'heart'}

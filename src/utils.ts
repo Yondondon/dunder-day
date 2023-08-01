@@ -26,3 +26,26 @@ export const secondsToDate = (seconds: number): string => {
 
   return `${day}.${month}.${year}`;
 }
+
+export const sortDunderList = (arr: any[], sortParam: string): any[] => {
+  switch(sortParam) {
+    case 'date':
+      arr.sort((a: any, b: any) => {
+        return b.created - a.created;
+      });
+      break;
+    case 'heart':
+      arr.sort((a: any, b: any) => {
+        return b.reactions.heart - a.reactions.heart;
+      });
+      break;
+    case 'poop':
+      arr.sort((a: any, b: any) => {
+        return b.reactions.poop - a.reactions.poop;
+      });
+      break;
+    default:
+      return arr;
+  }
+  return arr;
+}

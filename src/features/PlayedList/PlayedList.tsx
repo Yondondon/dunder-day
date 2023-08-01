@@ -8,6 +8,7 @@ import { PlayedListItem } from './components/PlayedListItem';
 import { Loader } from '../../components/Loader/Loader';
 import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
 import { LoadMoreBtn } from './components/LoadMoreBtn';
+import { SearchGame } from './components/SearchGame';
 
 export const PlayedList = () => {
   const {
@@ -55,12 +56,6 @@ export const PlayedList = () => {
         console.log('error: ' + error)
       })
   }
-
-  const handleRemove = (id: string) => {
-    const filtredList = playedlist.filter(item => item.id !== id)
-    setPlayedlist(filtredList)
-    getPlayedlist()
-  }
   
   useEffect(() => {
     if(results && results.data) {
@@ -71,19 +66,11 @@ export const PlayedList = () => {
 
   return (
     <div className='playedlist_wrap'>
-      {/* <PlayedListItem
-        key={Math.random().toString()}
-        name={'aaa'}
-        imageUrl={''}
-        gameUrl={''}
-        id={'asadasd'}
-        playedDate={1}
-        onRemove={handleRemove}
-      /> */}
       <div className='games_played'>
         <span>Дундер-ігор зіграно: {gamesQuantity}</span>
         { gamesQuantity === 69 && <img src='images/jerry.jpg' alt='' /> }
       </div>
+      <SearchGame onRemoveItem={() => getPlayedlist()} />
       <div className='loader_wrap'>
         { isFetching && <Loader />}
       </div>
@@ -97,7 +84,7 @@ export const PlayedList = () => {
             gameUrl={item.gameUrl}
             id={item.id}
             playedDate={item.playedDate}
-            onRemove={handleRemove}
+            onRemove={() => getPlayedlist()}
           />
         )
       })}

@@ -56,6 +56,32 @@ input[type='date'] {
   text-align: center;
 }
 
+h3 {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.animated_loading_btn {
+  transition: all .4s ease-in-out;
+  position: relative;
+  font-size: 16px;
+  border-radius: 18px;
+}
+
+.animated_loading_btn.loading .btn_text {
+  opacity: 0;
+}
+
+.animated_loading_btn img {
+  display: block;
+  width: 28px;
+  border-radius: 50%;
+  position: absolute;
+  top: calc(50% - 14px);
+  left: calc(50% - 14px);
+  animation: 3s linear 0s infinite loading;
+}
+
 .modal_background {
   position: fixed;
   top: 0;
@@ -495,11 +521,27 @@ input[type='date'] {
   border-radius: 50%;
 }
 
-.playedlist_wrap:empty::after {
-  content: 'У списку поки нема ігорів :с';
-  text-align: center;
-  font-style: italic;
-  display: block;
+.search_game_wrap {
+  border-width: 1px 0 1px 0;
+  border-style: dashed;
+  border-color: #dedee3;
+  margin-top: 10px;
+}
+
+.search_field_wrap {
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: center;
+}
+
+.search_field_wrap input {
+  width: 270px;
+  margin-right: 10px;
+}
+
+.clear_search_result {
+  margin: 0 auto 10px;
+  border-radius: 18px;
 }
 
 .playedlist_item_wrap {
@@ -556,27 +598,6 @@ input[type='date'] {
   display: flex;
   justify-content: center;
   margin: 20px 0;
-}
-
-.playedlist_loadmore_btn {
-  transition: all .4s ease-in-out;
-  position: relative;
-  font-size: 16px;
-  border-radius: 18px;
-}
-
-.playedlist_loadmore_btn.loading span {
-  opacity: 0;
-}
-
-.playedlist_loadmore_btn img {
-  display: block;
-  width: 28px;
-  border-radius: 50%;
-  position: absolute;
-  top: calc(50% - 14px);
-  left: calc(50% - 14px);
-  animation: 3s linear 0s infinite loading;
 }
 
 @media (max-width: 900px) {
@@ -709,6 +730,14 @@ input[type='date'] {
 @media (max-width: 360px) {
   .dunderlist_filter {
     font-size: 14px;
+  }
+
+  .search_game_wrap h3 {
+    margin: 10px 0 15px;
+  }
+
+  .search_field_wrap input {
+    width: 100%;
   }
 
   .playedlist_item_wrap {

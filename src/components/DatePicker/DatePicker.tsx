@@ -29,7 +29,7 @@ export const DatePicker: FC<Props> = ({ onChange }) => {
 
   return (
     <input
-      type="date"
+      type='date'
       onChange={e => handleChange(e)}
       ref={dateInputRef}
       value={dateVal}

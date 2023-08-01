@@ -27,17 +27,17 @@ export const App = () => {
       <BrowserRouter>
         <Routes>
           <Route index element={<HomePage />} />
-          <Route path="/login" element={
+          <Route path='/login' element={
             isLoggedIn ? <Navigate to='/' /> : <Login />
           } />
-          <Route path="/add-new-game" element={
+          <Route path='/add-new-game' element={
             <PrivateRoute>
               <AddNewGamePage />
             </PrivateRoute>
             }
           />
-          <Route path="/played" element={<PlayedGamesPage />} />
-          <Route path="*" element={<p>Такої сторінки не існує!</p>} />
+          <Route path='/played' element={<PlayedGamesPage />} />
+          <Route path='*' element={<p>Такої сторінки не існує!</p>} />
         </Routes>
       </BrowserRouter>
     </div>

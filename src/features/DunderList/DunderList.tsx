@@ -4,6 +4,7 @@ import { DunderListItem } from './components/DunderListItem';
 import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
 import { Loader } from '../../components/Loader/Loader';
 import { Filter } from './components/Filter';
+import { sortDunderList } from '../../utils';
 
 type SortOptionType = {
   value: string;
@@ -57,32 +58,15 @@ export const DunderList = () => {
   useEffect(() => {
     const arr = [...list];
     if(arr.length === 0) return;
-    switch(sortFilter.value) {
-      case 'date':
-        arr.sort((a: any, b: any) => {
-          return b.created - a.created;
-        });
-        break;
-      case 'heart':
-        arr.sort((a: any, b: any) => {
-          return b.reactions.heart - a.reactions.heart;
-        });
-        break;
-      case 'poop':
-        arr.sort((a: any, b: any) => {
-          return b.reactions.poop - a.reactions.poop;
-        });
-        break;
-      default:
-        return;
-    }
-    setList(arr)
+    const sortedList = sortDunderList(arr, sortFilter.value);
+    setList(sortedList)
   }, [sortFilter])
 
   useEffect(() => {
     if(results && results.data) {
-      const fetchedData = results.data.data.list;
-      setList(fetchedData)
+      const fetchedData = [...results.data.data.list];
+      const sortedList = sortDunderList(fetchedData, sortFilter.value);
+      setList(sortedList)
     }
   }, [results])
 

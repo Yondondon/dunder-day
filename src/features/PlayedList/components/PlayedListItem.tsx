@@ -11,7 +11,7 @@ type Props = {
   gameUrl: string;
   playedDate: number;
   id: string;
-  onRemove: (id: string) => void;
+  onRemove: (id: any) => void;
 }
 
 export const PlayedListItem: FC<Props> = ({ name, imageUrl, gameUrl, playedDate, id, onRemove }) => {

@@ -317,3 +317,29 @@ exports.loadMorePlayedList = onRequest(
   }
 );
 
+exports.getPlayedGameByName = onRequest(
+  { cors: [/firebase\.com$/, /web\.app$/, /localhost$/, /127.0.0.1$/] }, 
+  async (req: any, res: any) => {
+    const name = req.body;
+    const list = await getFirestore().collection("playedlist").get();
+    let result: any[] = [];
+
+    list.forEach((doc: any) => {
+      if(doc.data().name.toLowerCase().includes(name.toLowerCase())) {
+        result.push(doc.data())
+      }
+    });
+
+    if(result.length > 5) {
+      res.send({ success: false, msg: 'Забагто співпадінь. Спробуй уточнити назву.' });
+      return;
+    }
+
+    if(result.length === 0) {
+      res.send({ success: false, msg: 'Не знайдено жодних співпадінь.' });
+      return;
+    }
+
+    res.send({ success: true, data: { list: result } });
+  }
+);
